@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Panoramico</title>
+        <link rel="stylesheet" type="text/css" href="resources/css/endless.min.css"/>
+        <link href="resources/css/bootstrap.min.css" rel="stylesheet" media="screen"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/layout.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/menu.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/buttons.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/tabelas.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/textos.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/modal.css"/>
+        <link rel="stylesheet" type="text/css" href="resources/css/css.css"/>
+
+        <!-- FONTS -->
+        <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-4.6.3/css/font-awesome.min.css"/>
+    </h:head>
+
+    <body>
+        <h:form id="idTelaInicial">   
+            <p:growl id="growl"/>   
+
+
+            <br/><br/>
+            <div class="col-10 boxAzulClaro" style="width: 100%;">
+                <h:panelGroup rendered="#{!acessoMB.habilitarResultado}">
+                    <fieldset>
+                        <legend style="font-size: 22px;">
+                            Acesso
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                                <div style="font-size: 18px;" class="fa fa-sign-out"></div>
+                            </p:commandLink>
+                        </legend>
+                        <h:outputText value="Código do Associado" style="font-size: 26px;margin-left: 2%;float: left;"/>
+                        <br/><br/>
+                        <p:inputText value="#{acessoMB.codigoAssociado}" style="text-align: right;font-size: 26px; height: 50px;margin-left: 2%;width: 95%;" size="13" title="Código do Associado"/>
+                        <br/><br/>
+                        <h:outputText value="Código do Dependente" style="font-size: 26px;margin-left: 2%; float: left;"/>
+                        <br/><br/>
+                        <p:inputText value="#{acessoMB.codigoDependente}" style="text-align: right; height: 50px;width: 95%; font-size: 26px;margin-left: 2%;" title="Código de Dependente"/>
+                        <br/><br/>
+                        <h:outputText value="Código do Passaporte" style="font-size: 26px;margin-left: 2%; float: left;"/>
+                        <br/><br/>
+                        <p:inputText value="#{acessoMB.codigoPassaporte}" style="text-align: right;font-size: 26px;width: 95%; height: 50px;" size="13" title="Código de Passaporte"/>
+                        <br/>
+                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}" update="messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame"> 
+                            <div style="font-size: 26px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
+                        </p:commandLink>
+                        <br/><br/><br/>     
+                    </fieldset>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{acessoMB.habilitarResultado}" id="panelResultado">
+                    <fieldset>
+                        <legend style="font-size: 22px;">
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                                <div style="font-size: 18px;width: 70%; padding: 2%;margin-left: 5%; border-radius: 10px;" class="pesquisarAcesso">Nova Pesquisa</div>
+                            </p:commandLink>
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                                <div style="font-size: 18px;" class="fa fa-sign-out"></div>
+                            </p:commandLink>
+                            <br/><br/>
+                        </legend> 
+                        <h:panelGrid columns="3" style="background: transparent; border: none;">
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dados</div>
+                            </p:commandLink> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Financeiro</div>
+                            </p:commandLink> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
+                            </p:commandLink> 
+                        </h:panelGrid>
+                        <h:panelGroup>
+                            <div class="row">
+                                <div>
+                                    <br/>
+                                    <h:outputText value="#{acessoMB.nome}" style="font-size: 18px;" title="Nome" id="idCampoNome"/>
+                                    <br/>
+                                    <hr/>
+                                </div>
+                                <br/>
+                                <div>
+                                    <h:outputText value="Validade do exame" style="font-size: 16px;"/>
+                                    <br/>
+                                    <h:outputText value="#{acessoMB.dataExame}" style="font-size: 16px;#{acessoMB.corDataExame}" id="idCampoDataExame">
+                                        <f:convertDateTime   pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo"/> 
+                                    </h:outputText>
+                                    <hr/>
+                                </div>
+                                <br/>
+                                <div>
+                                    <p:commandLink   id="idbotaoLiberado" action="#{acessoMB.controleAcesso()}" update="@all">  
+                                        <div style="font-size: 18px;padding: 3%;width: 90%; margin-left: 5%;" class="#{acessoMB.tipoClasse}">
+                                            <h:outputText value="#{acessoMB.nomeStatus}"/>
+                                        </div>
+                                    </p:commandLink>
+                                    <br/>
+                                    <br/>
+                                    <br/>   
+                                    <hr/>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
+            </div>
+        </h:form> 
+    </body>
+</html>
