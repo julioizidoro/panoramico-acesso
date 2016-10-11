@@ -31,7 +31,7 @@
 
             <br/><br/>
             <div class="col-10 boxAzulClaro" style="width: 100%;">
-                <h:panelGroup rendered="#{!acessoMB.habilitarResultado}">
+                <h:panelGroup rendered="#{acessoMB.habilitarConsulta}" id="panelConsulta">
                     <fieldset>
                         <legend style="font-size: 22px;">
                             Acesso
@@ -51,7 +51,7 @@
                         <br/><br/>
                         <p:inputText value="#{acessoMB.codigoPassaporte}" style="text-align: right;font-size: 26px;width: 95%; height: 50px;" size="13" title="Código de Passaporte"/>
                         <br/>
-                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}" update="messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame"> 
+                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame"> 
                             <div style="font-size: 26px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
                         </p:commandLink>
                         <br/><br/><br/>     
@@ -69,17 +69,17 @@
                             <br/><br/>
                         </legend> 
                         <h:panelGrid columns="3" style="background: transparent; border: none;">
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}"> 
                                 <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dados</div>
                             </p:commandLink> 
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.consultaFinanceira()}"> 
                                 <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Financeiro</div>
                             </p:commandLink> 
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}"> 
+                            <p:commandLink rendered="#{acessoMB.habilitarBotaoDependente}" disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelDependete, panelConsulta, panelResultado, panelFinanceiro" action="#{acessoMB.listaDependentes()}"> 
                                 <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
                             </p:commandLink> 
                         </h:panelGrid>
-                        <h:panelGroup>
+                        <h:panelGroup  id="panelInfo">
                             <div class="row">
                                 <div>
                                     <br/>
@@ -113,6 +113,75 @@
                         <br/><br/>
                     </fieldset>
                 </h:panelGroup>
+                <h:panelGroup rendered="#{acessoMB.habilitarListaDependentes}" id="panelDependete">
+                    <fieldset>
+                        <legend style="font-size: 22px;">
+                            Lista de Dependente
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                                <div style="font-size: 18px;" class="fa fa-sign-out"></div>
+                            </p:commandLink>
+                            <br/>
+                        </legend>
+                        <h:panelGrid columns="3" style="background: transparent; border: none;">
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dados</div>
+                            </p:commandLink> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.consultaFinanceira()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Financeiro</div>
+                            </p:commandLink> 
+                            <p:commandLink rendered="#{acessoMB.habilitarBotaoDependente}" disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelDependete, panelConsulta, panelResultado, panelFinanceiro" action="#{acessoMB.listaDependentes()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
+                            </p:commandLink> 
+                        </h:panelGrid>
+                        <h:panelGroup>
+                            <ui:repeat value="#{acessoMB.listaDependente}"  var="dependente">
+                                <div class="row">
+                                    <div>
+                                        <h:outputText value="#{dependente.iddependente}" style="font-size: 18px;" title="Nome"/>
+                                        <h:outputText value="#{dependente.nome}" style="font-size: 18px;margin-left: 1%;" title="Nome"/>
+                                        <hr style="margin-left:3%; width: 94%;"/>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </h:panelGroup>
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
+                <h:panelGroup  id="panelFinanceiro" rendered="#{acessoMB.habilitarFinanceiro}">
+                    <fieldset>
+                        <legend style="font-size: 22px;">
+                            Fincanceiro
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                                <div style="font-size: 18px;" class="fa fa-sign-out"></div>
+                            </p:commandLink>
+                            <br/>
+                        </legend>
+                        <h:panelGrid columns="3" style="background: transparent; border: none;">
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisar()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dados</div>
+                            </p:commandLink> 
+                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.consultaFinanceira()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Financeiro</div>
+                            </p:commandLink> 
+                            <p:commandLink rendered="#{acessoMB.habilitarBotaoDependente}" disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelDependete, panelConsulta, panelResultado, panelFinanceiro" action="#{acessoMB.listaDependentes()}"> 
+                                <div style="font-size: 18px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
+                            </p:commandLink> 
+                        </h:panelGrid>
+                        <h:panelGroup>
+                            <ui:repeat value="#{acessoMB.listaContasReceber}"  var="contareceber">
+                                <h:panelGrid columns="3" style="background: transparent; border: none;color:black;">
+                                    <h:outputText value="#{contareceber.idcontasreceber}" style="font-size: 16px;" title="ID"/>
+                                    <h:outputText value="#{contareceber.datalancamento}" style="font-size: 16px;" title="Vencimento" id="idCampoDataExame">
+                                        <f:convertDateTime   pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo"/> 
+                                    </h:outputText>
+                                    <h:outputText value="#{contareceber.situacao}" style="font-size: 16px;" title="Situação"/>
+                                </h:panelGrid>
+                            </ui:repeat>
+                        </h:panelGroup>
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
+
             </div>
         </h:form> 
     </body>

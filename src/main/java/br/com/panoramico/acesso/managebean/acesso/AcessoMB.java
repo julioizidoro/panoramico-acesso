@@ -19,6 +19,7 @@ import br.com.panoramico.acesso.model.Passaporte;
 import br.com.panoramico.acesso.util.Mensagem;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class AcessoMB implements Serializable{
     private String corDataExame = "color:black;";
     private int codigoPassaporte;
     private boolean habilitarResultado = false;
+    private boolean habilitarConsulta = true;
     private String tipoClasse = "";
     private String nomeStatus = "";
     @EJB
@@ -80,11 +82,18 @@ public class AcessoMB implements Serializable{
     private int guardaAssociado = 0;
     private int guardaDependente  = 0;
     private int guardaPassaporte= 0;
+    private List<Dependente> listaDependente;
+    private boolean habilitarListaDependentes;
+    private List<Contasreceber> listaContasReceber;
+    private boolean habilitarFinanceiro = false;
+    private boolean habilitarBotaoDependente = true;
     
     
     @PostConstruct
     public void init(){
-        
+        if (listaDependente == null || listaDependente.isEmpty()) {
+            listaDependente = new ArrayList<Dependente>();
+        }
     }
 
     public ExameDao getExameDao() {
@@ -336,11 +345,66 @@ public class AcessoMB implements Serializable{
     public void setGuardaPassaporte(int guardaPassaporte) {
         this.guardaPassaporte = guardaPassaporte;
     }
+
+    public List<Dependente> getListaDependente() {
+        return listaDependente;
+    }
+
+    public void setListaDependente(List<Dependente> listaDependente) {
+        this.listaDependente = listaDependente;
+    }
+
+    public boolean isHabilitarConsulta() {
+        return habilitarConsulta;
+    }
+
+    public void setHabilitarConsulta(boolean habilitarConsulta) {
+        this.habilitarConsulta = habilitarConsulta;
+    }
+
+    public boolean isHabilitarListaDependentes() {
+        return habilitarListaDependentes;
+    }
+
+    public void setHabilitarListaDependentes(boolean habilitarListaDependentes) {
+        this.habilitarListaDependentes = habilitarListaDependentes;
+    }
+
+    public List<Contasreceber> getListaContasReceber() {
+        return listaContasReceber;
+    }
+
+    public void setListaContasReceber(List<Contasreceber> listaContasReceber) {
+        this.listaContasReceber = listaContasReceber;
+    }
+
+    public boolean isHabilitarFinanceiro() {
+        return habilitarFinanceiro;
+    }
+
+    public void setHabilitarFinanceiro(boolean habilitarFinanceiro) {
+        this.habilitarFinanceiro = habilitarFinanceiro;
+    }
+
+    public boolean isHabilitarBotaoDependente() {
+        return habilitarBotaoDependente;
+    }
+
+    public void setHabilitarBotaoDependente(boolean habilitarBotaoDependente) {
+        this.habilitarBotaoDependente = habilitarBotaoDependente;
+    }
     
     
     
     public void pesquisar(){
         boolean habilitarcampo = false;
+        if (guardaAssociado > 0) {
+            codigoAssociado = guardaAssociado;
+        }else if(guardaDependente > 0){
+            codigoDependente = guardaDependente;
+        }else if(codigoPassaporte > 0){
+            codigoPassaporte = guardaPassaporte;
+        }
         if (codigoAssociado > 0) {
             List<Associado> listaAssociado = associadoDao.list("Select a From Associado a Where a.idassociado=" + codigoAssociado);
             for (int i = 0; i < listaAssociado.size(); i++) {
@@ -367,6 +431,7 @@ public class AcessoMB implements Serializable{
                 guardaAssociado = codigoAssociado;
                 codigoAssociado = 0;
                 habilitarcampo = true;
+                habilitarBotaoDependente = true;
             }
         }else if(codigoDependente > 0){
             List<Dependente> listaDependente = dependenteDao.list("Select d From Dependente d Where d.iddependente=" + codigoDependente);
@@ -393,6 +458,7 @@ public class AcessoMB implements Serializable{
                 }
                 guardaDependente = codigoDependente;
                 codigoDependente = 0;
+                habilitarBotaoDependente = false;
                 habilitarcampo = true;
             }
         }else if (codigoPassaporte > 0) {
@@ -417,11 +483,15 @@ public class AcessoMB implements Serializable{
                 }
                 guardaPassaporte = codigoPassaporte;
                 codigoPassaporte = 0;
+                habilitarBotaoDependente = false;
                 habilitarcampo = true;
             }
         }
         if (habilitarcampo) {
             habilitarResultado = true;
+            habilitarConsulta = false;
+            habilitarListaDependentes = false;
+            habilitarFinanceiro = false;
         }
     }
     
@@ -479,10 +549,34 @@ public class AcessoMB implements Serializable{
     
     public void novaPesquisa(){
         habilitarResultado = false;
+        habilitarConsulta = true;
+        habilitarListaDependentes = false;
+        habilitarFinanceiro = false;
+        listaDependente = new ArrayList<Dependente>();
     }
     
     public void listaDependentes(){
-        
+        listaDependente = dependenteDao.list("Select d From Dependente d Where d.associado.idassociado=" + associado.getIdassociado());
+        if (listaDependente == null || listaDependente.isEmpty()) {
+            listaDependente = new ArrayList<Dependente>();
+        }
+        habilitarListaDependentes = true;
+        habilitarResultado = false;
+        habilitarConsulta = false;
+        habilitarFinanceiro = false;
+    }
+    
+    public void consultaFinanceira(){
+        if (associado != null) {
+            listaContasReceber = contasReceberDao.list("Select c From Contasreceber c Where c.cliente.idcliente=" + associado.getCliente().getIdcliente());
+            if (listaContasReceber == null || listaContasReceber.isEmpty()) {
+                listaContasReceber = new ArrayList<Contasreceber>();
+            }
+        }
+        habilitarListaDependentes = false;
+        habilitarResultado = false;
+        habilitarConsulta = false;
+        habilitarFinanceiro = true;
     }
     
 }
