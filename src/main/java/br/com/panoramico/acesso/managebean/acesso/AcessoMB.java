@@ -107,6 +107,7 @@ public class AcessoMB implements Serializable {
     private Evento evento;
     private List<Eventoconvidados> listaConvidadosPresentes;
     private boolean habilitarEventosConvidadosPresentes = false;
+    private String nomeConvidado;
 
     @PostConstruct
     public void init() {
@@ -513,6 +514,14 @@ public class AcessoMB implements Serializable {
     public void setHabilitarEventosConvidadosPresentes(boolean habilitarEventosConvidadosPresentes) {
         this.habilitarEventosConvidadosPresentes = habilitarEventosConvidadosPresentes;
     }
+
+    public String getNomeConvidado() {
+        return nomeConvidado;
+    }
+
+    public void setNomeConvidado(String nomeConvidado) {
+        this.nomeConvidado = nomeConvidado;
+    }
     
     
 
@@ -857,6 +866,7 @@ public class AcessoMB implements Serializable {
             habilitarListaDependentes = false;
             habilitarEventosConvidados = true;
             habilitarEventosConvidadosPresentes = false;
+            nomeConvidado="";
         }
     } 
     
@@ -902,6 +912,7 @@ public class AcessoMB implements Serializable {
             habilitarListaDependentes = false;
             habilitarEventosConvidados = false;
             habilitarEventosConvidadosPresentes = true;
+            nomeConvidado="";
         }
     }
     
@@ -923,4 +934,40 @@ public class AcessoMB implements Serializable {
             habilitarEventosConvidadosPresentes = true;
         }
     }
+    
+    
+    public void pesquisaConvidadoPendente(){ 
+        listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
+                + " and e.evento.idevento=" + evento.getIdevento()
+                + " and e.nome='"+nomeConvidado+"%'");
+        if (listaConvidados == null) {
+            Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
+        }else{
+            habilitarEventosDia = false;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidados = true;
+            habilitarEventosConvidadosPresentes = false; 
+        }
+    } 
+    
+    
+    public void pesquisaConvidadoPresente(){ 
+        listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
+                + " and e.evento.idevento=" + evento.getIdevento()
+                + " and e.nome='"+nomeConvidado+"%'");
+        if (listaConvidados == null) {
+            Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
+        }else{
+            habilitarEventosDia = false;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidados = false;
+            habilitarEventosConvidadosPresentes = true;
+        }
+    } 
 }
