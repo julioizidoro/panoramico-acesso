@@ -26,7 +26,7 @@
 
     <body>
         <h:form id="idTelaInicial">   
-            <p:growl id="growl" class="tamanho40"/>   
+            <p:growl autoUpdate="true" id="growl" showDetail="true" class="tamanho40"/>   
 
 
             <br/><br/>
@@ -94,13 +94,16 @@
                                                 <div style="font-size: 40px;padding: 3%;width: 90%; margin-left: 5%;" class="#{acessoMB.tipoClasse}">
                                                     <h:outputText value="#{acessoMB.nomeStatus}"/>
                                                 </div>
-                                            </p:commandLink>
+                                            </p:commandLink> 
                                             <br/>
                                             <br/>
                                             <br/>   
                                             <hr/>
+                                            <p:commandLink disabled="false" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
+                                                <div style="font-size: 40px;padding: 3%;width: 90%; margin-left: 5%;" class="pesquisarAcesso">Eventos</div>
+                                            </p:commandLink>
                                         </div> 
-                                    </div>
+                                    </div> 
                                 </h:panelGroup>
                             </p:tab>
                             <p:tab title="Financeiro" titleStyle="font-size:40px;border-radius:10px;">
@@ -200,7 +203,123 @@
                         <br/><br/>
                     </fieldset>
                 </h:panelGroup>
-
+                <h:panelGroup rendered="#{acessoMB.habilitarEventosDia}" id="panelEventosDia">
+                    <legend style="font-size: 22px;">
+                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.voltar()}" update="@all"> 
+                            <div style="font-size: 40px;width:50%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Voltar</div>
+                        </p:commandLink> 
+                        <br/>
+                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                            <div style="font-size: 40px;" class="fa fa-sign-out"></div>
+                        </p:commandLink>
+                        <br/><br/><br/>
+                    </legend> 
+                    <fieldset>
+                        <h:dataTable id="idConsultaEvento" style="font-size:40px; width: 98%;" styleClass="table" value="#{acessoMB.listaEvento}" var="eventos">
+                            <h:column>
+                                <f:facet name="header"><b style="font-size: 40px;">Ambiente</b></f:facet> 
+                                <h:outputText value="#{eventos.ambiente.nome}" style="font-size: 40px; float: left; color: black;" title="ID"/>
+                            </h:column> 
+                            <h:column >  
+                                <f:facet name="header"><b style="font-size: 40px;">Responsavel</b></f:facet>
+                                <h:outputText value="#{eventos.usuario.nome}" style="font-size: 40px; float: left;color: black;" title="Situação"/>
+                            </h:column>  
+                            <h:column >   
+                                <div>
+                                    <p:commandLink   id="idbotaoConvidados" action="#{acessoMB.listarConvidados(eventos)}" update="@all">  
+                                        <div style="font-size:45px;padding: 3%;width:100%;" class="pesquisarAcesso">
+                                            <h:outputText value="Convidados"/>
+                                        </div>
+                                    </p:commandLink>  
+                                    <hr/>
+                                </div>
+                            </h:column> 
+                        </h:dataTable>
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{acessoMB.habilitarEventosConvidados}" id="panelEventoConvidados">
+                    <legend style="font-size: 22px;">
+                        <p:commandLink disabled="false" style="width:40%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}" update="@all"> 
+                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Nova Pesquisa</div>
+                        </p:commandLink>
+                        <p:commandLink disabled="false" style="width:40%; margin-left:1.5%;" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
+                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:1.5%; border-radius: 10px;" class="pesquisarAcesso">Eventos</div>
+                        </p:commandLink>
+                        <br/>
+                        <p:commandLink disabled="false" style="width:50%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                            <div style="font-size: 40px;" class="fa fa-sign-out"></div>
+                        </p:commandLink>
+                        <br/><br/><br/>
+                    </legend> 
+                    <fieldset>
+                        <h:dataTable id="idConsultaConvidados" style="font-size:40px; width: 98%;" styleClass="table" value="#{acessoMB.listaConvidados}" var="convidados">
+                            <h:column>
+                                <f:facet name="header"><b style="font-size: 40px;">Nome</b></f:facet> 
+                                <h:outputText value="#{convidados.nome}" style="font-size: 40px; float: left; color: black;"/>
+                            </h:column> 
+                            <h:column >  
+                                <f:facet name="header"><b style="font-size: 40px;">Acompanhantes</b></f:facet>
+                                <h:outputText value="#{convidados.acompanhante}" style="font-size: 40px; float: left;color: black;"/>
+                            </h:column>  
+                            <h:column >    
+                                <p:commandLink   id="idbotaoConfirmar" action="#{acessoMB.convidadoCompareceu(convidados)}" update="@all">  
+                                    <div style="font-size:45px;padding: 3%;width:100%;" class="cancelar">
+                                        <h:outputText value="Não compareceu"/>
+                                    </div>
+                                </p:commandLink>    
+                            </h:column> 
+                        </h:dataTable>
+                        <p:commandLink   id="idbotaoConfirmar" action="#{acessoMB.listarConvidadosPresentes()}" update="@all">  
+                            <div style="font-size:45px;padding: 3%;width:98%;" class="cadastrar">
+                                <h:outputText value="Convidados Presentes"/>
+                            </div>
+                        </p:commandLink> 
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
+                
+                
+                <h:panelGroup rendered="#{acessoMB.habilitarEventosConvidadosPresentes}" id="panelEventoConvidadosPresentes">
+                    <legend style="font-size: 22px;">
+                        <p:commandLink disabled="false" style="width:40%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}" update="@all"> 
+                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Nova Pesquisa</div>
+                        </p:commandLink>
+                        <p:commandLink disabled="false" style="width:40%; margin-left:1.5%;" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
+                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:1.5%; border-radius: 10px;" class="pesquisarAcesso">Eventos</div>
+                        </p:commandLink>
+                        <br/>
+                        <p:commandLink disabled="false" style="width:50%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
+                            <div style="font-size: 40px;" class="fa fa-sign-out"></div>
+                        </p:commandLink>
+                        <br/><br/><br/>
+                    </legend> 
+                    <fieldset>
+                        <h:dataTable id="idConsultaConvidadosPresentes" style="font-size:40px; width: 98%;" styleClass="table" value="#{acessoMB.listaConvidadosPresentes}" var="convidadosPresentes">
+                            <h:column>
+                                <f:facet name="header"><b style="font-size: 40px;">Nome</b></f:facet> 
+                                <h:outputText value="#{convidadosPresentes.nome}" style="font-size: 40px; float: left; color: black;"/>
+                            </h:column> 
+                            <h:column >  
+                                <f:facet name="header"><b style="font-size: 40px;">Acompanhantes</b></f:facet>
+                                <h:outputText value="#{convidadosPresentes.acompanhante}" style="font-size: 40px; float: left;color: black;"/>
+                            </h:column>  
+                            <h:column >    
+                                <p:commandLink   id="idbotaoCancelar" action="#{acessoMB.cancelarConvidado(convidadosPresentes)}" update="@all">  
+                                    <div style="font-size:45px;padding: 3%;width:100%;" class="cadastrar">
+                                        <h:outputText value="Presente"/>
+                                    </div>
+                                </p:commandLink>    
+                            </h:column> 
+                        </h:dataTable> 
+                        <p:commandLink   id="idbotaoPendentes" action="#{acessoMB.listarConvidados(acessoMB.evento)}" update="@all">  
+                            <div style="font-size:45px;padding: 3%;width:98%;" class="cancelar">
+                                <h:outputText value="Convidados Pendentes"/>
+                            </div>
+                        </p:commandLink> 
+                        <br/><br/>
+                    </fieldset>
+                </h:panelGroup>
             </div>
         </h:form> 
     </body>

@@ -4,6 +4,8 @@ import br.com.panoramico.acesso.Dao.AssociadoDao;
 import br.com.panoramico.acesso.Dao.ContasReceberDao;
 import br.com.panoramico.acesso.Dao.ControleAcessoDao;
 import br.com.panoramico.acesso.Dao.DependenteDao;
+import br.com.panoramico.acesso.Dao.EventoConvidadosDao;
+import br.com.panoramico.acesso.Dao.EventoDao;
 import br.com.panoramico.acesso.Dao.ExameAssociadoDao;
 import br.com.panoramico.acesso.Dao.ExameDao;
 import br.com.panoramico.acesso.Dao.ExameDependenteDao;
@@ -12,6 +14,8 @@ import br.com.panoramico.acesso.model.Associado;
 import br.com.panoramico.acesso.model.Contasreceber;
 import br.com.panoramico.acesso.model.Controleacesso;
 import br.com.panoramico.acesso.model.Dependente;
+import br.com.panoramico.acesso.model.Evento;
+import br.com.panoramico.acesso.model.Eventoconvidados;
 import br.com.panoramico.acesso.model.Exame;
 import br.com.panoramico.acesso.model.Exameassociado;
 import br.com.panoramico.acesso.model.Examedependente;
@@ -92,6 +96,17 @@ public class AcessoMB implements Serializable {
     private int adultos;
     private int criancas;
     private boolean habilitarInfoPassaporte = false;
+    private List<Evento> listaEvento;
+    @EJB
+    private EventoDao eventoDao;
+    private boolean habilitarEventosDia = false;
+    private List<Eventoconvidados> listaConvidados;
+    private boolean habilitarEventosConvidados = false;
+    @EJB
+    private EventoConvidadosDao eventoConvidadosDao;
+    private Evento evento;
+    private List<Eventoconvidados> listaConvidadosPresentes;
+    private boolean habilitarEventosConvidadosPresentes = false;
 
     @PostConstruct
     public void init() {
@@ -428,6 +443,79 @@ public class AcessoMB implements Serializable {
         this.criancas = criancas;
     }
 
+    public List<Evento> getListaEvento() {
+        return listaEvento;
+    }
+
+    public void setListaEvento(List<Evento> listaEvento) {
+        this.listaEvento = listaEvento;
+    }
+
+    public boolean isHabilitarEventosDia() {
+        return habilitarEventosDia;
+    }
+
+    public void setHabilitarEventosDia(boolean habilitarEventosDia) {
+        this.habilitarEventosDia = habilitarEventosDia;
+    }
+
+    public EventoDao getEventoDao() {
+        return eventoDao;
+    }
+
+    public void setEventoDao(EventoDao eventoDao) {
+        this.eventoDao = eventoDao;
+    }
+
+    public List<Eventoconvidados> getListaConvidados() {
+        return listaConvidados;
+    }
+
+    public void setListaConvidados(List<Eventoconvidados> listaConvidados) {
+        this.listaConvidados = listaConvidados;
+    } 
+    public boolean isHabilitarEventosConvidados() {
+        return habilitarEventosConvidados;
+    }
+
+    public void setHabilitarEventosConvidados(boolean habilitarEventosConvidados) {
+        this.habilitarEventosConvidados = habilitarEventosConvidados;
+    }
+
+    public EventoConvidadosDao getEventoConvidadosDao() {
+        return eventoConvidadosDao;
+    }
+
+    public void setEventoConvidadosDao(EventoConvidadosDao eventoConvidadosDao) {
+        this.eventoConvidadosDao = eventoConvidadosDao;
+    }
+
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
+    }
+
+    public List<Eventoconvidados> getListaConvidadosPresentes() {
+        return listaConvidadosPresentes;
+    }
+
+    public void setListaConvidadosPresentes(List<Eventoconvidados> listaConvidadosPresentes) {
+        this.listaConvidadosPresentes = listaConvidadosPresentes;
+    }
+
+    public boolean isHabilitarEventosConvidadosPresentes() {
+        return habilitarEventosConvidadosPresentes;
+    }
+
+    public void setHabilitarEventosConvidadosPresentes(boolean habilitarEventosConvidadosPresentes) {
+        this.habilitarEventosConvidadosPresentes = habilitarEventosConvidadosPresentes;
+    }
+    
+    
+
     public void pesquisar() {
         boolean habilitarcampo = false;
 //        if (guardaAssociado.length() >=1 && codigoAssociado.length() == 0) {
@@ -553,6 +641,9 @@ public class AcessoMB implements Serializable {
                 habilitarcampo = false;
                 habilitarInfoPassaporte = true;
                 habilitarConsulta = false;
+                habilitarEventosConvidados = false;
+                habilitarEventosDia = false;
+                habilitarEventosConvidadosPresentes = false;
             }
         }
         if (habilitarcampo) {
@@ -561,6 +652,9 @@ public class AcessoMB implements Serializable {
             habilitarListaDependentes = false;
             habilitarFinanceiro = false;
             habilitarInfoPassaporte = false;
+            habilitarEventosDia = false;
+            habilitarEventosConvidados = false;
+            habilitarEventosConvidadosPresentes = false;
         }
     }
 
@@ -615,6 +709,9 @@ public class AcessoMB implements Serializable {
         habilitarConsulta = true;
         habilitarListaDependentes = false;
         habilitarFinanceiro = false;
+        habilitarEventosConvidados = false;
+        habilitarEventosDia = false;
+        habilitarEventosConvidadosPresentes = false;
         habilitarInfoPassaporte = false;
         listaDependente = new ArrayList<Dependente>();
         codigoAssociado = "";
@@ -634,6 +731,9 @@ public class AcessoMB implements Serializable {
         habilitarResultado = false;
         habilitarConsulta = false;
         habilitarFinanceiro = false;
+        habilitarEventosConvidados = false;
+        habilitarEventosDia = false;
+        habilitarEventosConvidadosPresentes = false;
     }
 
     public void consultaFinanceira() {
@@ -654,6 +754,9 @@ public class AcessoMB implements Serializable {
         habilitarResultado = false;
         habilitarConsulta = false;
         habilitarFinanceiro = true;
+        habilitarEventosDia = false;
+        habilitarEventosConvidados = false;
+        habilitarEventosConvidadosPresentes = false;
     }
 
     public Date treisMesesAtrais() {
@@ -707,6 +810,9 @@ public class AcessoMB implements Serializable {
         habilitarResultado = false;
         habilitarConsulta = false;
         habilitarFinanceiro = true;
+        habilitarEventosDia = false;
+        habilitarEventosConvidados = false;
+        habilitarEventosConvidadosPresentes = false;
     }
 
     public void telaDepedente() {
@@ -714,5 +820,107 @@ public class AcessoMB implements Serializable {
         habilitarResultado = false;
         habilitarConsulta = false;
         habilitarFinanceiro = false;
+        habilitarEventosDia = false;
+        habilitarEventosConvidados = false;
+        habilitarEventosConvidadosPresentes = false;
+    }
+    
+    
+    public void eventosDia(){
+        Date data = new Date();
+        listaEvento = eventoDao.list("Select e from Evento e where situacao='A'"
+                + " and e.data='" + Formatacao.ConvercaoDataSql(data) + "'");
+        if (listaEvento == null) {
+            Mensagem.lancarMensagemInfo("", "Nenhum evento agendado.");
+        }else{
+            habilitarEventosDia = true;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidadosPresentes = false;
+            habilitarEventosConvidados = false;
+        }
+    }
+    
+     public void listarConvidados(Evento evento){ 
+        this.evento = evento;
+        listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
+                + " and e.evento.idevento=" + evento.getIdevento());
+        if (listaConvidados == null) {
+            Mensagem.lancarMensagemInfo("", "Todos os convidados presentes.");
+        }else{
+            habilitarEventosDia = false;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidados = true;
+            habilitarEventosConvidadosPresentes = false;
+        }
+    } 
+    
+    public void convidadoCompareceu(Eventoconvidados eventoconvidados){
+        eventoconvidados.setSituacao("S");
+        eventoConvidadosDao.update(eventoconvidados);
+        listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
+                + " and e.evento.idevento=" + eventoconvidados.getEvento().getIdevento());
+        if (listaConvidados == null) {
+            Mensagem.lancarMensagemInfo("", "Todos os convidados presentes.");
+        }   
+        habilitarEventosDia = false;
+        habilitarResultado = false;
+        habilitarConsulta = false;
+        habilitarFinanceiro = false;
+        habilitarListaDependentes = false;
+        habilitarEventosConvidados = true;
+        habilitarEventosConvidadosPresentes = false;
+    }
+    
+    public void voltar(){
+        habilitarResultado = true;
+        habilitarConsulta = false;
+        habilitarListaDependentes = false;
+        habilitarFinanceiro = false;
+        habilitarInfoPassaporte = false;
+        habilitarEventosDia = false;
+        habilitarEventosConvidadosPresentes = false;
+        habilitarEventosConvidados = false;
+    }
+    
+    
+    public void listarConvidadosPresentes(){ 
+        listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
+                + " and e.evento.idevento=" + evento.getIdevento());
+        if (listaConvidadosPresentes == null) {
+            Mensagem.lancarMensagemInfo("", "Nenhum convidado presente.");
+        } else{
+            habilitarEventosDia = false;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidados = false;
+            habilitarEventosConvidadosPresentes = true;
+        }
+    }
+    
+    
+    public void cancelarConvidado(Eventoconvidados eventoconvidados){ 
+        eventoconvidados.setSituacao("N");
+        eventoConvidadosDao.update(eventoconvidados);
+        listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
+                + " and e.evento.idevento=" + evento.getIdevento());
+        if (listaConvidadosPresentes == null) {
+            Mensagem.lancarMensagemInfo("", "Nenhum convidado presente.");
+        } else{
+            habilitarEventosDia = false;
+            habilitarResultado = false;
+            habilitarConsulta = false;
+            habilitarFinanceiro = false;
+            habilitarListaDependentes = false;
+            habilitarEventosConvidados = false;
+            habilitarEventosConvidadosPresentes = true;
+        }
     }
 }
