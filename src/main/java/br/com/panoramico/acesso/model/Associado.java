@@ -60,6 +60,8 @@ public class Associado implements Serializable {
     private String estado;
     @Column(name = "matricula")
     private String matricula;
+    @Column(name = "situacao")
+    private String situacao;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "descotomensalidade")
     private Float descotomensalidade;
@@ -211,6 +213,14 @@ public class Associado implements Serializable {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
+    }
+
+    public String getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(String situacao) {
+        this.situacao = situacao;
     }
     
     

@@ -39,11 +39,10 @@ import org.primefaces.event.SelectEvent;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 @Named
 @ViewScoped
-public class AcessoMB implements Serializable{
-    
+public class AcessoMB implements Serializable {
+
     @EJB
     private ExameDao exameDao;
     private Exame exame;
@@ -59,7 +58,7 @@ public class AcessoMB implements Serializable{
     @EJB
     private AssociadoDao associadoDao;
     private Associado associado;
-    @EJB 
+    @EJB
     private DependenteDao dependenteDao;
     private Dependente dependente;
     @EJB
@@ -82,8 +81,8 @@ public class AcessoMB implements Serializable{
     @EJB
     private PassaporteDao passaporteDao;
     private String guardaAssociado = "";
-    private String guardaDependente  = "";
-    private String guardaPassaporte= "";
+    private String guardaDependente = "";
+    private String guardaPassaporte = "";
     private List<Dependente> listaDependente;
     private boolean habilitarListaDependentes;
     private List<Contasreceber> listaContasReceber;
@@ -93,10 +92,9 @@ public class AcessoMB implements Serializable{
     private int adultos;
     private int criancas;
     private boolean habilitarInfoPassaporte = false;
-    
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         if (listaDependente == null || listaDependente.isEmpty()) {
             listaDependente = new ArrayList<Dependente>();
         }
@@ -118,8 +116,6 @@ public class AcessoMB implements Serializable{
         this.exame = exame;
     }
 
-    
-
     public ContasReceberDao getContasReceberDao() {
         return contasReceberDao;
     }
@@ -135,8 +131,6 @@ public class AcessoMB implements Serializable{
     public void setContasreceber(Contasreceber contasreceber) {
         this.contasreceber = contasreceber;
     }
-
-    
 
     public String getNome() {
         return nome;
@@ -250,7 +244,6 @@ public class AcessoMB implements Serializable{
         this.corDataExame = corDataExame;
     }
 
-    
     public boolean isHabilitarResultado() {
         return habilitarResultado;
     }
@@ -355,8 +348,6 @@ public class AcessoMB implements Serializable{
         this.guardaPassaporte = guardaPassaporte;
     }
 
-   
-
     public List<Dependente> getListaDependente() {
         return listaDependente;
     }
@@ -413,8 +404,6 @@ public class AcessoMB implements Serializable{
         this.codigoPesquisa = codigoPesquisa;
     }
 
-    
-
     public boolean isHabilitarInfoPassaporte() {
         return habilitarInfoPassaporte;
     }
@@ -438,10 +427,8 @@ public class AcessoMB implements Serializable{
     public void setCriancas(int criancas) {
         this.criancas = criancas;
     }
-    
-    
-    
-    public void pesquisar(){
+
+    public void pesquisar() {
         boolean habilitarcampo = false;
 //        if (guardaAssociado.length() >=1 && codigoAssociado.length() == 0) {
 //            codigoAssociado = guardaAssociado;
@@ -457,26 +444,35 @@ public class AcessoMB implements Serializable{
             }
             if (associado == null) {
                 Mensagem.lancarMensagemInfo("Não encontrado", "");
-            }else{
+            } else {
                 nome = associado.getCliente().getNome();
+                exameassociado = null;
+                dataExame = null;
                 List<Exameassociado> listaExameAssociado = exameAssociadoDao.list("Select ea From Exameassociado ea Where associado.idassociado=" + associado.getIdassociado());
                 for (int i = 0; i < listaExameAssociado.size(); i++) {
                     exameassociado = listaExameAssociado.get(i);
                 }
                 if (exameassociado == null || exameassociado.getIdexameassociado() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
-                }else{
+                } else {
                     dataExame = exameassociado.getExame().getDatavalidade();
-                    if ((dataExame.compareTo(new Date()) == 1) || 
-                            (dataExame.compareTo(new Date()) == 0)) {
-                        tipoClasse = "cadastrar";
-                        nomeStatus = "LIBERADO";
-                        corDataExame = "color:black;";
-                        descricaoNegado = "";
-                    }else{
+                    if ((dataExame.compareTo(new Date()) == 1)
+                            || (dataExame.compareTo(new Date()) == 0)) {
+                        if (exameassociado.getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                            tipoClasse = "cadastrar";
+                            nomeStatus = "LIBERADO";
+                            corDataExame = "color:black;";
+                            descricaoNegado = "";
+                        } else {
+                            tipoClasse = "cancelar";
+                            nomeStatus = "NEGADO";
+                            Mensagem.lancarMensagemInfo("Associado inativo", "");
+                            corDataExame = "color:black;";
+                        }
+                    } else {
                         tipoClasse = "cancelar";
                         nomeStatus = "NEGADO";
-                         Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
+                        Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
                         corDataExame = "color:#FB4C4C;";
                     }
                     guardaAssociado = codigoAssociado;
@@ -486,30 +482,39 @@ public class AcessoMB implements Serializable{
                     consultaFinanceira();
                 }
             }
-        }else if(codigoDependente.length() >= 1){
+        } else if (codigoDependente.length() >= 1) {
             List<Dependente> listaDependente = dependenteDao.list("Select d From Dependente d Where d.matricula='" + codigoDependente + "'");
             for (int i = 0; i < listaDependente.size(); i++) {
                 dependente = listaDependente.get(i);
             }
             if (dependente == null) {
                 Mensagem.lancarMensagemInfo("Não encontrado", "");
-            }else{
+            } else {
                 nome = dependente.getNome();
+                examedependente = null;
+                dataExame = null;
                 List<Examedependente> listaExameDependente = exameDependenteDao.list("Select ed From Examedependente ed Where dependente.iddependente=" + dependente.getIddependente());
                 for (int i = 0; i < listaExameDependente.size(); i++) {
                     examedependente = listaExameDependente.get(i);
                 }
                 if (examedependente == null || examedependente.getIdexamedependente() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
-                }else{
+                } else {
                     dataExame = examedependente.getExame().getDatavalidade();
-                    if ((dataExame.compareTo(new Date()) == 1) ||
-                            (dataExame.compareTo(new Date()) == 0)) {
-                        tipoClasse = "cadastrar";
-                        nomeStatus = "LIBERADO";
-                        corDataExame = "color:black;";
-                        descricaoNegado = "";
-                    }else{ 
+                    if ((dataExame.compareTo(new Date()) == 1)
+                            || (dataExame.compareTo(new Date()) == 0)) {
+                        if (examedependente.getDependente().getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                            tipoClasse = "cadastrar";
+                            nomeStatus = "LIBERADO";
+                            corDataExame = "color:black;";
+                            descricaoNegado = "";
+                        }else{
+                            tipoClasse = "cancelar";
+                            nomeStatus = "NEGADO";
+                            Mensagem.lancarMensagemInfo("Associado inativo", "");
+                            corDataExame = "color:black;";
+                        }
+                    } else {
                         tipoClasse = "cancelar";
                         nomeStatus = "NEGADO";
                         Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
@@ -521,14 +526,14 @@ public class AcessoMB implements Serializable{
                     consultaFinanceira();
                 }
             }
-        }else if (codigoPassaporte.length() >= 1) {
+        } else if (codigoPassaporte.length() >= 1) {
             List<Passaporte> listaPassaportes = passaporteDao.list("Select p From Passaporte p Where p.localizador='" + codigoPassaporte + "'");
             for (int i = 0; i < listaPassaportes.size(); i++) {
                 passaporte = listaPassaportes.get(i);
             }
             if (passaporte == null) {
                 Mensagem.lancarMensagemInfo("Não encontrado", "");
-            }else{
+            } else {
                 nome = passaporte.getCliente().getNome();
                 adultos = passaporte.getAdultos();
                 criancas = passaporte.getCriancas();
@@ -537,7 +542,7 @@ public class AcessoMB implements Serializable{
                     nomeStatus = "LIBERADO";
                     corDataExame = "color:black;";
                     descricaoNegado = "";
-                }else{ 
+                } else {
                     tipoClasse = "cancelar";
                     nomeStatus = "NEGADO";
                     Mensagem.lancarMensagemInfo("Passaporte ja foi utilizado", "");
@@ -558,9 +563,8 @@ public class AcessoMB implements Serializable{
             habilitarInfoPassaporte = false;
         }
     }
-    
-    
-    public void controleAcesso(){
+
+    public void controleAcesso() {
         controleacesso = new Controleacesso();
         controleacesso.setSituacao(nomeStatus);
         controleacesso.setData(new Date());
@@ -570,48 +574,43 @@ public class AcessoMB implements Serializable{
             controleacesso.setAssociado(associado);
             controleacesso.setTipo("A");
             controleacesso = controleAcessoDao.update(controleacesso);
-        }else if(guardaDependente.length() >= 1){
+        } else if (guardaDependente.length() >= 1) {
             controleacesso.setIddependente(dependente.getIddependente());
             controleacesso.setAssociado(dependente.getAssociado());
             controleacesso.setTipo("D");
-        controleacesso = controleAcessoDao.update(controleacesso);
+            controleacesso = controleAcessoDao.update(controleacesso);
         }
-        Mensagem.lancarMensagemInfo( controleacesso.getSituacao() + " com sucesso", "");
+        Mensagem.lancarMensagemInfo(controleacesso.getSituacao() + " com sucesso", "");
     }
-    
-    
+
     public String retornarHoraAtual() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         Date hora = Calendar.getInstance().getTime();
         return (sdf.format(hora));
     }
-    
-    
-    public String novoPassaporte(){
+
+    public String novoPassaporte() {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("contentWidth", 550);
         RequestContext.getCurrentInstance().openDialog("cadPassaporte", options, null);
         return "";
-    }   
-    
-    
-    public void retornoDialogPassaporte(SelectEvent event){
+    }
+
+    public void retornoDialogPassaporte(SelectEvent event) {
         Passaporte passaporte = (Passaporte) event.getObject();
         if (passaporte.getIdpassaporte() != null) {
             Mensagem.lancarMensagemInfo("Compra feita com sucesso", "");
         }
     }
-    
-    
+
     public String novoRelatorio() {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("contentWidth", 580);
         RequestContext.getCurrentInstance().openDialog("imprimirAcesso", options, null);
         return "";
     }
-    
-    
-    public void novaPesquisa(){
+
+    public void novaPesquisa() {
         habilitarResultado = false;
         habilitarConsulta = true;
         habilitarListaDependentes = false;
@@ -625,8 +624,8 @@ public class AcessoMB implements Serializable{
         guardaDependente = "";
         guardaPassaporte = "";
     }
-    
-    public void listaDependentes(){
+
+    public void listaDependentes() {
         listaDependente = dependenteDao.list("Select d From Dependente d Where d.associado.idassociado=" + associado.getIdassociado());
         if (listaDependente == null || listaDependente.isEmpty()) {
             listaDependente = new ArrayList<Dependente>();
@@ -636,19 +635,19 @@ public class AcessoMB implements Serializable{
         habilitarConsulta = false;
         habilitarFinanceiro = false;
     }
-    
-    public void consultaFinanceira(){
+
+    public void consultaFinanceira() {
         Date dataInicio = treisMesesAtrais();
         Date dataFinal = treisMesesDepois();
         String sql = "";
         if (associado != null) {
             sql = "Select c From Contasreceber c Where c.cliente.idcliente=" + associado.getCliente().getIdcliente();
-        }else if(dependente != null){
+        } else if (dependente != null) {
             sql = "Select c From Contasreceber c Where c.cliente.idcliente=" + dependente.getAssociado().getCliente().getIdcliente();
         }
         if (sql.length() > 5) {
             sql = sql + " and c.datalancamento>='" + Formatacao.ConvercaoDataSql(dataInicio) + "' and "
-                    + " c.datalancamento<='" + Formatacao.ConvercaoDataSql(dataFinal) + "' order by c.datalancamento"; 
+                    + " c.datalancamento<='" + Formatacao.ConvercaoDataSql(dataFinal) + "' order by c.datalancamento";
             listaContasReceber = contasReceberDao.list(sql);
         }
         habilitarListaDependentes = false;
@@ -656,64 +655,61 @@ public class AcessoMB implements Serializable{
         habilitarConsulta = false;
         habilitarFinanceiro = true;
     }
-    
-    
+
     public Date treisMesesAtrais() {
         Calendar c = new GregorianCalendar();
         c.setTime(new Date());
         c.add(Calendar.MONTH, -3);
         Date data = c.getTime();
-       return data;
+        return data;
     }
-    
-    
+
     public Date treisMesesDepois() {
         Calendar c = new GregorianCalendar();
         c.setTime(new Date());
         c.add(Calendar.MONTH, 3);
         Date data = c.getTime();
-       return data;
+        return data;
     }
-     
-    
-    public void pesquisarDependente(){
+
+    public void pesquisarDependente() {
         associado = null;
         dependente = null;
         codigoDependente = codigoPesquisa;
         codigoPesquisa = "";
         pesquisar();
     }
-    
-    public void pesquisarAssociado(){
+
+    public void pesquisarAssociado() {
         dependente = null;
         associado = null;
         codigoAssociado = codigoPesquisa;
         codigoPesquisa = "";
         pesquisar();
     }
-    
-    public void pesquisarPassaporte(){
+
+    public void pesquisarPassaporte() {
         codigoPassaporte = codigoPesquisa;
         codigoPesquisa = "";
         pesquisar();
     }
-    
-    public String contaVencida(Contasreceber contasreceber){
+
+    public String contaVencida(Contasreceber contasreceber) {
         if (contasreceber.getDatalancamento().before(new Date()) && contasreceber.getSituacao().equalsIgnoreCase("PAGAR")) {
             return " color:red;";
-        }else{
+        } else {
             return " color:black;";
         }
     }
-    
-    public void telaFinanceira(){
-         habilitarListaDependentes = false;
+
+    public void telaFinanceira() {
+        habilitarListaDependentes = false;
         habilitarResultado = false;
         habilitarConsulta = false;
         habilitarFinanceiro = true;
     }
-    
-    public void telaDepedente(){
+
+    public void telaDepedente() {
         habilitarListaDependentes = true;
         habilitarResultado = false;
         habilitarConsulta = false;
