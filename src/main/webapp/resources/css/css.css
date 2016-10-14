@@ -62,3 +62,11 @@ body{
 .acordion{
     background: black !important;
 }
+
+
+.ui-widget-header {
+    border: none;
+    background: transparent; 
+    color: #ffffff;
+    font-weight: bold;
+}
