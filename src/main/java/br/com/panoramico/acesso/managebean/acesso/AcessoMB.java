@@ -939,35 +939,19 @@ public class AcessoMB implements Serializable {
     public void pesquisaConvidadoPendente(){ 
         listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
                 + " and e.evento.idevento=" + evento.getIdevento()
-                + " and e.nome='"+nomeConvidado+"%'");
+                + " and e.nome like '"+nomeConvidado+"%'");
         if (listaConvidados == null) {
             Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
-        }else{
-            habilitarEventosDia = false;
-            habilitarResultado = false;
-            habilitarConsulta = false;
-            habilitarFinanceiro = false;
-            habilitarListaDependentes = false;
-            habilitarEventosConvidados = true;
-            habilitarEventosConvidadosPresentes = false; 
-        }
+        } 
     } 
     
     
     public void pesquisaConvidadoPresente(){ 
-        listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
+        listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
                 + " and e.evento.idevento=" + evento.getIdevento()
-                + " and e.nome='"+nomeConvidado+"%'");
-        if (listaConvidados == null) {
+                + " and e.nome like '"+nomeConvidado+"%'");
+        if (listaConvidadosPresentes == null) {
             Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
-        }else{
-            habilitarEventosDia = false;
-            habilitarResultado = false;
-            habilitarConsulta = false;
-            habilitarFinanceiro = false;
-            habilitarListaDependentes = false;
-            habilitarEventosConvidados = false;
-            habilitarEventosConvidadosPresentes = true;
-        }
+        } 
     } 
 }

@@ -41,7 +41,7 @@
                         </legend>
                         <h:outputText value="Identificador" style="font-size: 40px;margin-left: 2%;float: left;"/>
                         <br/><br/>
-                        <p:inputText value="#{acessoMB.codigoPesquisa}" style="text-align: right;font-size: 40px; height: 90px;margin-left: 2%;width: 95%;" size="13" title="Código do Associado"/>
+                        <p:inputText value="#{acessoMB.codigoPesquisa}" style="text-align: right;font-size: 40px; height: 90px;margin-left:-0.5%;width: 97%;" size="13" title="Código do Associado"/>
                         <br/>
                         <h:panelGrid columns="3" style="background: transparent; border: none;">
                             <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisarAssociado()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"> 
@@ -52,12 +52,11 @@
                             </p:commandLink> 
                             <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte" action="#{acessoMB.pesquisarPassaporte()}"> 
                                 <div style="font-size: 40px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Passaporte</div>
-                            </p:commandLink> 
-                            <br/><br/>
-                            <p:commandLink disabled="false" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
-                                <div style="font-size: 40px;padding: 3%;width: 90%; margin-left: 5%;" class="pesquisarAcesso">Eventos</div>
-                            </p:commandLink>
+                            </p:commandLink>  
                         </h:panelGrid>
+                        <p:commandLink disabled="false" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
+                            <div style="font-size: 40px;padding: 3%;width:96%; margin-left:2.4%;" class="pesquisarAcesso">Eventos</div>
+                        </p:commandLink>
                         <br/><br/><br/>     
                     </fieldset>  
                 </h:panelGroup>
@@ -206,8 +205,8 @@
                 </h:panelGroup>
                 <h:panelGroup rendered="#{acessoMB.habilitarEventosDia}" id="panelEventosDia">
                     <legend style="font-size: 22px;">
-                        <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.voltar()}" update="@all"> 
-                            <div style="font-size: 40px;width:50%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Voltar</div>
+                        <p:commandLink disabled="false" style="width:40%; margin-left:2%;" ajax="false" action="#{acessoMB.novaPesquisa()}" update="@all"> 
+                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Nova Pesquisa</div>
                         </p:commandLink> 
                         <br/>
                         <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{usuarioLogadoMB.deslogar()}"> 
@@ -254,11 +253,11 @@
                         <br/><br/><br/>
                     </legend> 
                     <fieldset>
-                        <h:outputText value="Nome" style="font-size: 40px; float: left; color: black;margin-left: 2%;"/>
-                        <br/>
-                        <p:inputText value="#{acessoMB.nomeConvidado}" style="font-size: 40px; height: 90px;margin-left: 2%;width:50%;" />
-                        <p:commandLink disabled="false" style="width:40%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisaConvidadoPendente()}" update="idConsultaConvidados"> 
-                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
+                        <h:outputText value="Nome" style="font-size: 40px; color:#3D8397; float: left; color: black;margin-left: 2%;"/>
+                        <br/><br/> <br/> 
+                        <p:inputText value="#{acessoMB.nomeConvidado}" style="float: left;font-size: 40px; height: 90px;margin-left: 2%;width:40%;" />
+                        <p:commandLink disabled="false" style="width:32%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisaConvidadoPendente()}" update="idConsultaConvidados"> 
+                            <div style="font-size: 40px;width:32%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
                         </p:commandLink>
                         <h:dataTable id="idConsultaConvidados" style="font-size:40px; width: 98%;" styleClass="table" value="#{acessoMB.listaConvidados}" var="convidados">
                             <h:column>
@@ -302,12 +301,13 @@
                         <br/><br/><br/>
                     </legend> 
                     <fieldset> 
-                         <h:outputText value="Nome" style="font-size: 40px; float: left; color: black;margin-left: 2%;"/>
-                        <br/>
-                        <p:inputText value="#{acessoMB.nomeConvidado}" style="font-size: 40px; height: 90px;margin-left: 2%;width:50%;" />
-                        <p:commandLink disabled="false" style="width:40%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisaConvidadoPresente()}" update="idConsultaConvidadosPresentes"> 
-                            <div style="font-size: 40px;width:40%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
+                         <h:outputText value="Nome" style="font-size: 40px; float: left;color:#3D8397; color: black;margin-left: 2%;"/>
+                        <br/><br/> <br/> 
+                        <p:inputText value="#{acessoMB.nomeConvidado}" style="float: left;font-size: 40px; height: 90px;margin-left: 2%;width:40%;" />
+                        <p:commandLink disabled="false" style="width:32%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisaConvidadoPresente()}" update="idConsultaConvidadosPresentes"> 
+                            <div style="font-size: 40px;width:32%; padding:1%;margin-left:3%; border-radius: 10px;" class="pesquisarAcesso">Pesquisar</div>
                         </p:commandLink>
+                        <br/><br/> 
                         <h:dataTable id="idConsultaConvidadosPresentes" style="font-size:40px; width: 98%;" styleClass="table" value="#{acessoMB.listaConvidadosPresentes}" var="convidadosPresentes">
                             <h:column>
                                 <f:facet name="header"><b style="font-size: 40px;">Nome</b></f:facet>   
