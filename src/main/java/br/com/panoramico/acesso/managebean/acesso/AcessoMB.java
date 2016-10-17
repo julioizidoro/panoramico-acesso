@@ -527,13 +527,9 @@ public class AcessoMB implements Serializable {
 
     public void pesquisar() {
         boolean habilitarcampo = false;
-//        if (guardaAssociado.length() >=1 && codigoAssociado.length() == 0) {
-//            codigoAssociado = guardaAssociado;
-//        }else if(guardaDependente.length() >= 1 && codigoDependente.length() ==  0){
-//            codigoDependente = guardaDependente;
-//        }else if(guardaPassaporte.length() >= 1 && codigoPassaporte.length() == 0){
-//            codigoPassaporte = guardaPassaporte;
-//        }
+        associado = null;
+        dependente = null;
+        passaporte = null;
         if (codigoAssociado.length() >= 1) {
             List<Associado> listaAssociado = associadoDao.list("Select a From Associado a Where a.matricula='" + codigoAssociado + "'");
             for (int i = 0; i < listaAssociado.size(); i++) {
@@ -542,7 +538,7 @@ public class AcessoMB implements Serializable {
             if (associado == null) {
                 Mensagem.lancarMensagemInfo("Não encontrado", "");
             } else {
-                nome = associado.getCliente().getNome();
+                nome = "";
                 exameassociado = null;
                 dataExame = null;
                 List<Exameassociado> listaExameAssociado = exameAssociadoDao.list("Select ea From Exameassociado ea Where associado.idassociado=" + associado.getIdassociado());
@@ -552,31 +548,36 @@ public class AcessoMB implements Serializable {
                 if (exameassociado == null || exameassociado.getIdexameassociado() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
                 } else {
-                    dataExame = exameassociado.getExame().getDatavalidade();
-                    if ((dataExame.compareTo(new Date()) == 1)
-                            || (dataExame.compareTo(new Date()) == 0)) {
-                        if (exameassociado.getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
-                            tipoClasse = "cadastrar";
-                            nomeStatus = "LIBERADO";
-                            corDataExame = "color:black;";
-                            descricaoNegado = "";
+                    if (exameassociado.getExame().getDatavalidade() == null) {
+                        Mensagem.lancarMensagemInfo("Atenção", " Associado não passou por exame medico!!");
+                    }else{
+                        nome = associado.getCliente().getNome();
+                        dataExame = exameassociado.getExame().getDatavalidade();
+                        if ((dataExame.compareTo(new Date()) == 1)
+                                || (dataExame.compareTo(new Date()) == 0)) {
+                            if (exameassociado.getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                                tipoClasse = "cadastrar";
+                                nomeStatus = "LIBERADO";
+                                corDataExame = "color:black;";
+                                descricaoNegado = "";
+                            } else {
+                                tipoClasse = "cancelar";
+                                nomeStatus = "NEGADO";
+                                Mensagem.lancarMensagemInfo("Associado inativo", "");
+                                corDataExame = "color:black;";
+                            }
                         } else {
                             tipoClasse = "cancelar";
                             nomeStatus = "NEGADO";
-                            Mensagem.lancarMensagemInfo("Associado inativo", "");
-                            corDataExame = "color:black;";
+                            Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
+                            corDataExame = "color:#FB4C4C;";
                         }
-                    } else {
-                        tipoClasse = "cancelar";
-                        nomeStatus = "NEGADO";
-                        Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
-                        corDataExame = "color:#FB4C4C;";
+                        guardaAssociado = codigoAssociado;
+                        habilitarcampo = true;
+                        habilitarBotaoDependente = true;
+                        listaDependentes();
+                        consultaFinanceira();
                     }
-                    guardaAssociado = codigoAssociado;
-                    habilitarcampo = true;
-                    habilitarBotaoDependente = true;
-                    listaDependentes();
-                    consultaFinanceira();
                 }
             }
         } else if (codigoDependente.length() >= 1) {
@@ -587,7 +588,7 @@ public class AcessoMB implements Serializable {
             if (dependente == null) {
                 Mensagem.lancarMensagemInfo("Não encontrado", "");
             } else {
-                nome = dependente.getNome();
+                nome = "";
                 examedependente = null;
                 dataExame = null;
                 List<Examedependente> listaExameDependente = exameDependenteDao.list("Select ed From Examedependente ed Where dependente.iddependente=" + dependente.getIddependente());
@@ -597,30 +598,35 @@ public class AcessoMB implements Serializable {
                 if (examedependente == null || examedependente.getIdexamedependente() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
                 } else {
-                    dataExame = examedependente.getExame().getDatavalidade();
-                    if ((dataExame.compareTo(new Date()) == 1)
-                            || (dataExame.compareTo(new Date()) == 0)) {
-                        if (examedependente.getDependente().getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
-                            tipoClasse = "cadastrar";
-                            nomeStatus = "LIBERADO";
-                            corDataExame = "color:black;";
-                            descricaoNegado = "";
-                        }else{
+                    if (examedependente.getExame().getDatavalidade() == null) {
+                        Mensagem.lancarMensagemInfo("Atenção", " Dependente não passou por exame medico!!");
+                    }else{
+                        nome = dependente.getNome();
+                        dataExame = examedependente.getExame().getDatavalidade();
+                        if ((dataExame.compareTo(new Date()) == 1)
+                                || (dataExame.compareTo(new Date()) == 0)) {
+                            if (examedependente.getDependente().getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                                tipoClasse = "cadastrar";
+                                nomeStatus = "LIBERADO";
+                                corDataExame = "color:black;";
+                                descricaoNegado = "";
+                            }else{
+                                tipoClasse = "cancelar";
+                                nomeStatus = "NEGADO";
+                                Mensagem.lancarMensagemInfo("Associado inativo", "");
+                                corDataExame = "color:black;";
+                            }
+                        } else {
                             tipoClasse = "cancelar";
                             nomeStatus = "NEGADO";
-                            Mensagem.lancarMensagemInfo("Associado inativo", "");
-                            corDataExame = "color:black;";
+                            Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
+                            corDataExame = "color:#FB4C4C;";
                         }
-                    } else {
-                        tipoClasse = "cancelar";
-                        nomeStatus = "NEGADO";
-                        Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
-                        corDataExame = "color:#FB4C4C;";
+                        guardaDependente = codigoDependente;
+                        habilitarBotaoDependente = false;
+                        habilitarcampo = true;
+                        consultaFinanceira();
                     }
-                    guardaDependente = codigoDependente;
-                    habilitarBotaoDependente = false;
-                    habilitarcampo = true;
-                    consultaFinanceira();
                 }
             }
         } else if (codigoPassaporte.length() >= 1) {
@@ -682,8 +688,12 @@ public class AcessoMB implements Serializable {
             controleacesso.setAssociado(dependente.getAssociado());
             controleacesso.setTipo("D");
             controleacesso = controleAcessoDao.update(controleacesso);
+        }else if(guardaPassaporte.length() >= 1){
+            passaporte.setDataacesso(new Date());
+            passaporte.setHoraacesso(retornarHoraAtual());
+            passaporteDao.update(passaporte);
         }
-        Mensagem.lancarMensagemInfo(controleacesso.getSituacao() + " com sucesso", "");
+        Mensagem.lancarMensagemInfo(" Salvo " + " com sucesso", "");
     }
 
     public String retornarHoraAtual() {
