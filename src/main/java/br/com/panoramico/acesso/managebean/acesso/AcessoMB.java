@@ -474,7 +474,8 @@ public class AcessoMB implements Serializable {
 
     public void setListaConvidados(List<Eventoconvidados> listaConvidados) {
         this.listaConvidados = listaConvidados;
-    } 
+    }
+
     public boolean isHabilitarEventosConvidados() {
         return habilitarEventosConvidados;
     }
@@ -522,8 +523,7 @@ public class AcessoMB implements Serializable {
     public void setNomeConvidado(String nomeConvidado) {
         this.nomeConvidado = nomeConvidado;
     }
-    
-    
+
 
     public void pesquisar() {
         boolean habilitarcampo = false;
@@ -547,44 +547,31 @@ public class AcessoMB implements Serializable {
                 }
                 if (exameassociado == null || exameassociado.getIdexameassociado() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
+                } else if (exameassociado.getExame().getDatavalidade() == null) {
+                    Mensagem.lancarMensagemInfo("Atenção", " Associado não passou por exame medico!!");
                 } else {
-                    if (exameassociado.getExame().getDatavalidade() == null) {
-                        Mensagem.lancarMensagemInfo("Atenção", " Associado não passou por exame medico!!");
-                    }else{
-                        nome = associado.getCliente().getNome();
-                        dataExame = exameassociado.getExame().getDatavalidade();
-                        if (verificarInadimplente()) {
-                            tipoClasse = "cancelar";
-                            nomeStatus = "NEGADO";
-                            Mensagem.lancarMensagemInfo("Acesso negado, cliente inadimplente!!", "");
-                            corDataExame = "color:black;";
-                        }else{
-                            if ((dataExame.compareTo(new Date()) == 1)
-                                    || (dataExame.compareTo(new Date()) == 0)) {
-                                if (exameassociado.getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
-                                    tipoClasse = "cadastrar";
-                                    nomeStatus = "LIBERADO";
-                                    corDataExame = "color:black;";
-                                    descricaoNegado = "";
-                                } else {
-                                    tipoClasse = "cancelar";
-                                    nomeStatus = "NEGADO";
-                                    Mensagem.lancarMensagemInfo("Associado inativo", "");
-                                    corDataExame = "color:black;";
-                                }
-                            } else {
-                                tipoClasse = "cancelar";
-                                nomeStatus = "NEGADO";
-                                Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
-                                corDataExame = "color:#FB4C4C;";
-                            }
+                    nome = associado.getCliente().getNome();
+                    dataExame = exameassociado.getExame().getDatavalidade();
+                    if (verificarInadimplente()) {
+                        popularAcesso(false, false);
+                        Mensagem.lancarMensagemInfo("Acesso negado, cliente inadimplente!!", "");
+                    } else if ((dataExame.compareTo(new Date()) == 1)
+                            || (dataExame.compareTo(new Date()) == 0)) {
+                        if (exameassociado.getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                            popularAcesso(true, false);
+                        } else {
+                            popularAcesso(false, false);
+                            Mensagem.lancarMensagemInfo("Associado inativo", "");
                         }
-                        guardaAssociado = codigoAssociado;
-                        habilitarcampo = true;
-                        habilitarBotaoDependente = true;
-                        listaDependentes();
-                        consultaFinanceira();
+                    } else {
+                        popularAcesso(false, true);
+                        Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
                     }
+                    guardaAssociado = codigoAssociado;
+                    habilitarcampo = true;
+                    habilitarBotaoDependente = true;
+                    listaDependentes();
+                    consultaFinanceira();
                 }
             }
         } else if (codigoDependente.length() >= 1) {
@@ -604,43 +591,30 @@ public class AcessoMB implements Serializable {
                 }
                 if (examedependente == null || examedependente.getIdexamedependente() == null) {
                     Mensagem.lancarMensagemInfo("Não encontrado", "");
+                } else if (examedependente.getExame().getDatavalidade() == null) {
+                    Mensagem.lancarMensagemInfo("Atenção", " Dependente não passou por exame medico!!");
                 } else {
-                    if (examedependente.getExame().getDatavalidade() == null) {
-                        Mensagem.lancarMensagemInfo("Atenção", " Dependente não passou por exame medico!!");
-                    }else{
-                        nome = dependente.getNome();
-                        dataExame = examedependente.getExame().getDatavalidade();
-                        if (verificarInadimplente()) {
-                            tipoClasse = "cancelar";
-                            nomeStatus = "NEGADO";
-                            Mensagem.lancarMensagemInfo("Acesso negado, cliente inadimplente!!", "");
-                            corDataExame = "color:black;";
-                        }else{
-                            if ((dataExame.compareTo(new Date()) == 1)
-                                    || (dataExame.compareTo(new Date()) == 0)) {
-                                if (examedependente.getDependente().getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
-                                    tipoClasse = "cadastrar";
-                                    nomeStatus = "LIBERADO";
-                                    corDataExame = "color:black;";
-                                    descricaoNegado = "";
-                                }else{
-                                    tipoClasse = "cancelar";
-                                    nomeStatus = "NEGADO";
-                                    Mensagem.lancarMensagemInfo("Associado inativo", "");
-                                    corDataExame = "color:black;";
-                                }
-                            } else {
-                                tipoClasse = "cancelar";
-                                nomeStatus = "NEGADO";
-                                Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
-                                corDataExame = "color:#FB4C4C;";
-                            }
+                    nome = dependente.getNome();
+                    dataExame = examedependente.getExame().getDatavalidade();
+                    if (verificarInadimplente()) {
+                        popularAcesso(false, false);
+                        Mensagem.lancarMensagemInfo("Acesso negado, cliente inadimplente!!", "");
+                    } else if ((dataExame.compareTo(new Date()) == 1)
+                            || (dataExame.compareTo(new Date()) == 0)) {
+                        if (examedependente.getDependente().getAssociado().getSituacao().equalsIgnoreCase("Ativo")) {
+                            popularAcesso(true, false);
+                        } else {
+                            popularAcesso(false, false);
+                            Mensagem.lancarMensagemInfo("Associado inativo", "");
                         }
-                        guardaDependente = codigoDependente;
-                        habilitarBotaoDependente = false;
-                        habilitarcampo = true;
-                        consultaFinanceira();
+                    } else {
+                        popularAcesso(false, true);
+                        Mensagem.lancarMensagemInfo("Validade do exame expirada", "");
                     }
+                    guardaDependente = codigoDependente;
+                    habilitarBotaoDependente = false;
+                    habilitarcampo = true;
+                    consultaFinanceira();
                 }
             }
         } else if (codigoPassaporte.length() >= 1) {
@@ -655,15 +629,10 @@ public class AcessoMB implements Serializable {
                 adultos = passaporte.getAdultos();
                 criancas = passaporte.getCriancas();
                 if (passaporte.getDataacesso() == null) {
-                    tipoClasse = "cadastrar";
-                    nomeStatus = "LIBERADO";
-                    corDataExame = "color:black;";
-                    descricaoNegado = "";
+                    popularAcesso(true, false);
                 } else {
-                    tipoClasse = "cancelar";
-                    nomeStatus = "NEGADO";
+                    popularAcesso(false, true);
                     Mensagem.lancarMensagemInfo("Passaporte ja foi utilizado", "");
-                    corDataExame = "color:#FB4C4C;";
                 }
                 guardaPassaporte = codigoPassaporte;
                 habilitarBotaoDependente = false;
@@ -702,10 +671,10 @@ public class AcessoMB implements Serializable {
             controleacesso.setAssociado(dependente.getAssociado());
             controleacesso.setTipo("D");
             controleacesso = controleAcessoDao.update(controleacesso);
-        }else if(guardaPassaporte.length() >= 1){
+        } else if (guardaPassaporte.length() >= 1) {
             passaporte.setDataacesso(new Date());
             passaporte.setHoraacesso(retornarHoraAtual());
-            passaporteDao.update(passaporte);
+            passaporte = passaporteDao.update(passaporte);
         }
         Mensagem.lancarMensagemInfo(" Salvo " + " com sucesso", "");
     }
@@ -857,15 +826,14 @@ public class AcessoMB implements Serializable {
         habilitarEventosConvidados = false;
         habilitarEventosConvidadosPresentes = false;
     }
-    
-    
-    public void eventosDia(){
+
+    public void eventosDia() {
         Date data = new Date();
         listaEvento = eventoDao.list("Select e from Evento e where situacao='A'"
                 + " and e.data='" + Formatacao.ConvercaoDataSql(data) + "'");
         if (listaEvento == null) {
             Mensagem.lancarMensagemInfo("", "Nenhum evento agendado.");
-        }else{
+        } else {
             habilitarEventosDia = true;
             habilitarResultado = false;
             habilitarConsulta = false;
@@ -875,14 +843,14 @@ public class AcessoMB implements Serializable {
             habilitarEventosConvidados = false;
         }
     }
-    
-     public void listarConvidados(Evento evento){ 
+
+    public void listarConvidados(Evento evento) {
         this.evento = evento;
         listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
                 + " and e.evento.idevento=" + evento.getIdevento());
         if (listaConvidados == null) {
             Mensagem.lancarMensagemInfo("", "Todos os convidados presentes.");
-        }else{
+        } else {
             habilitarEventosDia = false;
             habilitarResultado = false;
             habilitarConsulta = false;
@@ -890,18 +858,18 @@ public class AcessoMB implements Serializable {
             habilitarListaDependentes = false;
             habilitarEventosConvidados = true;
             habilitarEventosConvidadosPresentes = false;
-            nomeConvidado="";
+            nomeConvidado = "";
         }
-    } 
-    
-    public void convidadoCompareceu(Eventoconvidados eventoconvidados){
+    }
+
+    public void convidadoCompareceu(Eventoconvidados eventoconvidados) {
         eventoconvidados.setSituacao("S");
         eventoConvidadosDao.update(eventoconvidados);
         listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
                 + " and e.evento.idevento=" + eventoconvidados.getEvento().getIdevento());
         if (listaConvidados == null) {
             Mensagem.lancarMensagemInfo("", "Todos os convidados presentes.");
-        }   
+        }
         habilitarEventosDia = false;
         habilitarResultado = false;
         habilitarConsulta = false;
@@ -910,8 +878,8 @@ public class AcessoMB implements Serializable {
         habilitarEventosConvidados = true;
         habilitarEventosConvidadosPresentes = false;
     }
-    
-    public void voltar(){
+
+    public void voltar() {
         habilitarResultado = true;
         habilitarConsulta = false;
         habilitarListaDependentes = false;
@@ -921,14 +889,13 @@ public class AcessoMB implements Serializable {
         habilitarEventosConvidadosPresentes = false;
         habilitarEventosConvidados = false;
     }
-    
-    
-    public void listarConvidadosPresentes(){ 
+
+    public void listarConvidadosPresentes() {
         listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
                 + " and e.evento.idevento=" + evento.getIdevento());
         if (listaConvidadosPresentes == null) {
             Mensagem.lancarMensagemInfo("", "Nenhum convidado presente.");
-        } else{
+        } else {
             habilitarEventosDia = false;
             habilitarResultado = false;
             habilitarConsulta = false;
@@ -936,19 +903,18 @@ public class AcessoMB implements Serializable {
             habilitarListaDependentes = false;
             habilitarEventosConvidados = false;
             habilitarEventosConvidadosPresentes = true;
-            nomeConvidado="";
+            nomeConvidado = "";
         }
     }
-    
-    
-    public void cancelarConvidado(Eventoconvidados eventoconvidados){ 
+
+    public void cancelarConvidado(Eventoconvidados eventoconvidados) {
         eventoconvidados.setSituacao("N");
         eventoConvidadosDao.update(eventoconvidados);
         listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
                 + " and e.evento.idevento=" + evento.getIdevento());
         if (listaConvidadosPresentes == null) {
             Mensagem.lancarMensagemInfo("", "Nenhum convidado presente.");
-        } else{
+        } else {
             habilitarEventosDia = false;
             habilitarResultado = false;
             habilitarConsulta = false;
@@ -958,31 +924,29 @@ public class AcessoMB implements Serializable {
             habilitarEventosConvidadosPresentes = true;
         }
     }
-    
-    
-    public void pesquisaConvidadoPendente(){ 
+
+    public void pesquisaConvidadoPendente() {
         listaConvidados = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='N'"
                 + " and e.evento.idevento=" + evento.getIdevento()
-                + " and e.nome like '"+nomeConvidado+"%'");
+                + " and e.nome like '" + nomeConvidado + "%'");
         if (listaConvidados == null) {
             Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
-        } 
-    } 
-    
-    
-    public void pesquisaConvidadoPresente(){ 
+        }
+    }
+
+    public void pesquisaConvidadoPresente() {
         listaConvidadosPresentes = eventoConvidadosDao.list("Select e from Eventoconvidados e where e.situacao='S'"
                 + " and e.evento.idevento=" + evento.getIdevento()
-                + " and e.nome like '"+nomeConvidado+"%'");
+                + " and e.nome like '" + nomeConvidado + "%'");
         if (listaConvidadosPresentes == null) {
             Mensagem.lancarMensagemInfo("", "Convidado não encontrado.");
-        } 
+        }
     }
-    
-    public boolean verificarInadimplente(){
+
+    public boolean verificarInadimplente() {
         boolean inadimplente = false;
-         String sql = "";
-         List<Contasreceber> listaFinanceira;
+        String sql = "";
+        List<Contasreceber> listaFinanceira;
         if (associado != null) {
             sql = "Select c From Contasreceber c Where c.cliente.idcliente=" + associado.getCliente().getIdcliente();
         } else if (dependente != null) {
@@ -992,9 +956,38 @@ public class AcessoMB implements Serializable {
         listaFinanceira = contasReceberDao.list(sql);
         if (listaFinanceira == null || listaFinanceira.isEmpty()) {
             return inadimplente;
-        }else{
+        } else {
             inadimplente = true;
             return inadimplente;
         }
+    }
+
+    public void popularAcesso(boolean liberado, boolean dataVencida) {
+        if (liberado) {
+            tipoClasse = "cadastrar";
+            nomeStatus = "LIBERADO";
+            descricaoNegado = "";
+        } else {
+            tipoClasse = "cancelar";
+            nomeStatus = "NEGADO";
+        }
+
+        if (dataVencida) {
+            corDataExame = "color:#FB4C4C;";
+        } else {
+            corDataExame = "color:black;";
+        }
+    }
+
+
+    public String validarDados() {
+        String msg = "";
+        if (passaporte.getAcessoadulto() > passaporte.getAdultos()) {
+            msg = msg + " Quantidade de adulto maior que o passaporte permite \r\n";
+        }
+        if (passaporte.getAcessocrianca() > passaporte.getCriancas()) {
+            msg = msg + " Quantidade de criança maior que o passaporte permite \r\n";
+        }
+        return msg;
     }
 }
