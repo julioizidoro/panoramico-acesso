@@ -70,3 +70,26 @@ body{
     color: #ffffff;
     font-weight: bold;
 }
+
+
+
+.ui-selectonemenu .ui-selectonemenu-label {
+    display: block;
+    border: none;
+    white-space: nowrap;
+    overflow: hidden;
+    font-weight: normal;
+    width: 100%;
+    text-align: left;
+    font-size: 40px;
+}
+
+
+.ui-selectonemenu-panel .ui-selectonemenu-list-item {
+    border: 0px none;
+    margin: 1px 0;
+    padding: 3px 5px;
+    font-size: 40px;
+    text-align: left;
+    white-space: nowrap;
+}

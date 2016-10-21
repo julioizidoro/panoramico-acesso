@@ -1,6 +1,7 @@
 package br.com.panoramico.acesso.managebean.acesso;
 
 import br.com.panoramico.acesso.Dao.AssociadoDao;
+import br.com.panoramico.acesso.Dao.ClienteDao;
 import br.com.panoramico.acesso.Dao.ContasReceberDao;
 import br.com.panoramico.acesso.Dao.ControleAcessoDao;
 import br.com.panoramico.acesso.Dao.DependenteDao;
@@ -9,8 +10,13 @@ import br.com.panoramico.acesso.Dao.EventoDao;
 import br.com.panoramico.acesso.Dao.ExameAssociadoDao;
 import br.com.panoramico.acesso.Dao.ExameDao;
 import br.com.panoramico.acesso.Dao.ExameDependenteDao;
+import br.com.panoramico.acesso.Dao.ParametrosDao;
 import br.com.panoramico.acesso.Dao.PassaporteDao;
+import br.com.panoramico.acesso.Dao.PassaporteValorDao;
+import br.com.panoramico.acesso.Dao.PlanoContaDao;
+import br.com.panoramico.acesso.managebean.UsuarioLogadoMB;
 import br.com.panoramico.acesso.model.Associado;
+import br.com.panoramico.acesso.model.Cliente;
 import br.com.panoramico.acesso.model.Contasreceber;
 import br.com.panoramico.acesso.model.Controleacesso;
 import br.com.panoramico.acesso.model.Dependente;
@@ -19,7 +25,10 @@ import br.com.panoramico.acesso.model.Eventoconvidados;
 import br.com.panoramico.acesso.model.Exame;
 import br.com.panoramico.acesso.model.Exameassociado;
 import br.com.panoramico.acesso.model.Examedependente;
+import br.com.panoramico.acesso.model.Parametros;
 import br.com.panoramico.acesso.model.Passaporte;
+import br.com.panoramico.acesso.model.Passaportevalor;
+import br.com.panoramico.acesso.model.Planoconta;
 import br.com.panoramico.acesso.util.Formatacao;
 import br.com.panoramico.acesso.util.Mensagem;
 import java.io.Serializable;
@@ -34,6 +43,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -108,12 +118,39 @@ public class AcessoMB implements Serializable {
     private List<Eventoconvidados> listaConvidadosPresentes;
     private boolean habilitarEventosConvidadosPresentes = false;
     private String nomeConvidado;
+    private boolean habilitarCadPassaporte = false;
+    private boolean habilitarCadCliente = false;
+    private Cliente cliente;
+    @EJB
+    private ClienteDao clienteDao;
+    private String formaPagamento;
+    private float valorTotal;
+    private float valorCrianca;
+    private float totalValorCrianca;
+    private float valorAdulto;
+    private float totalValorAdulto;
+    private Passaportevalor passaportevalor;
+    private List<Passaportevalor> listaPassaporteValor;
+    @EJB
+    private PassaporteValorDao passaporteValorDao;
+    private boolean cadastrocliente = false;
+    private boolean cadastropassaporte = true;
+    private String cpfCliente;
+    @Inject
+    private UsuarioLogadoMB usuarioLogadoMB;
+    private Parametros parametros;
+    @EJB
+    private ParametrosDao parametrosDao;
+    private Planoconta planoconta;
+    @EJB
+    private PlanoContaDao planoContaDao;
 
     @PostConstruct
     public void init() {
         if (listaDependente == null || listaDependente.isEmpty()) {
             listaDependente = new ArrayList<Dependente>();
         }
+        getValoresPassaporte();
     }
 
     public ExameDao getExameDao() {
@@ -524,6 +561,176 @@ public class AcessoMB implements Serializable {
         this.nomeConvidado = nomeConvidado;
     }
 
+    public boolean isHabilitarCadPassaporte() {
+        return habilitarCadPassaporte;
+    }
+
+    public void setHabilitarCadPassaporte(boolean habilitarCadPassaporte) {
+        this.habilitarCadPassaporte = habilitarCadPassaporte;
+    }
+
+    public boolean isHabilitarCadCliente() {
+        return habilitarCadCliente;
+    }
+
+    public void setHabilitarCadCliente(boolean habilitarCadCliente) {
+        this.habilitarCadCliente = habilitarCadCliente;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public ClienteDao getClienteDao() {
+        return clienteDao;
+    }
+
+    public void setClienteDao(ClienteDao clienteDao) {
+        this.clienteDao = clienteDao;
+    }
+
+    public String getFormaPagamento() {
+        return formaPagamento;
+    }
+
+    public void setFormaPagamento(String formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
+    public float getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(float valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public float getValorCrianca() {
+        return valorCrianca;
+    }
+
+    public void setValorCrianca(float valorCrianca) {
+        this.valorCrianca = valorCrianca;
+    }
+
+    public float getTotalValorCrianca() {
+        return totalValorCrianca;
+    }
+
+    public void setTotalValorCrianca(float totalValorCrianca) {
+        this.totalValorCrianca = totalValorCrianca;
+    }
+
+    public float getValorAdulto() {
+        return valorAdulto;
+    }
+
+    public void setValorAdulto(float valorAdulto) {
+        this.valorAdulto = valorAdulto;
+    }
+
+    public float getTotalValorAdulto() {
+        return totalValorAdulto;
+    }
+
+    public void setTotalValorAdulto(float totalValorAdulto) {
+        this.totalValorAdulto = totalValorAdulto;
+    }
+
+    public Passaportevalor getPassaportevalor() {
+        return passaportevalor;
+    }
+
+    public void setPassaportevalor(Passaportevalor passaportevalor) {
+        this.passaportevalor = passaportevalor;
+    }
+
+    public List<Passaportevalor> getListaPassaporteValor() {
+        return listaPassaporteValor;
+    }
+
+    public void setListaPassaporteValor(List<Passaportevalor> listaPassaporteValor) {
+        this.listaPassaporteValor = listaPassaporteValor;
+    }
+
+    public PassaporteValorDao getPassaporteValorDao() {
+        return passaporteValorDao;
+    }
+
+    public void setPassaporteValorDao(PassaporteValorDao passaporteValorDao) {
+        this.passaporteValorDao = passaporteValorDao;
+    }
+
+    public boolean isCadastrocliente() {
+        return cadastrocliente;
+    }
+
+    public void setCadastrocliente(boolean cadastrocliente) {
+        this.cadastrocliente = cadastrocliente;
+    }
+
+    public boolean isCadastropassaporte() {
+        return cadastropassaporte;
+    }
+
+    public void setCadastropassaporte(boolean cadastropassaporte) {
+        this.cadastropassaporte = cadastropassaporte;
+    }
+
+    public String getCpfCliente() {
+        return cpfCliente;
+    }
+
+    public void setCpfCliente(String cpfCliente) {
+        this.cpfCliente = cpfCliente;
+    }
+
+    public UsuarioLogadoMB getUsuarioLogadoMB() {
+        return usuarioLogadoMB;
+    }
+
+    public void setUsuarioLogadoMB(UsuarioLogadoMB usuarioLogadoMB) {
+        this.usuarioLogadoMB = usuarioLogadoMB;
+    }
+
+    public Parametros getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(Parametros parametros) {
+        this.parametros = parametros;
+    }
+
+    public ParametrosDao getParametrosDao() {
+        return parametrosDao;
+    }
+
+    public void setParametrosDao(ParametrosDao parametrosDao) {
+        this.parametrosDao = parametrosDao;
+    }
+
+    public Planoconta getPlanoconta() {
+        return planoconta;
+    }
+
+    public void setPlanoconta(Planoconta planoconta) {
+        this.planoconta = planoconta;
+    }
+
+    public PlanoContaDao getPlanoContaDao() {
+        return planoContaDao;
+    }
+
+    public void setPlanoContaDao(PlanoContaDao planoContaDao) {
+        this.planoContaDao = planoContaDao;
+    }
+
+    
+    
 
     public void pesquisar() {
         boolean habilitarcampo = false;
@@ -685,13 +892,7 @@ public class AcessoMB implements Serializable {
         return (sdf.format(hora));
     }
 
-    public String novoPassaporte() {
-        Map<String, Object> options = new HashMap<String, Object>();
-        options.put("contentWidth", 550);
-        RequestContext.getCurrentInstance().openDialog("cadPassaporte", options, null);
-        return "";
-    }
-
+   
     public void retornoDialogPassaporte(SelectEvent event) {
         Passaporte passaporte = (Passaporte) event.getObject();
         if (passaporte.getIdpassaporte() != null) {
@@ -989,5 +1190,134 @@ public class AcessoMB implements Serializable {
             msg = msg + " Quantidade de criança maior que o passaporte permite \r\n";
         }
         return msg;
+    }
+    
+    
+    public void novoPassaporte(){
+        passaporte = new Passaporte();
+        getValoresPassaporte();
+        cpfCliente = "";
+        formaPagamento = "";
+        valorAdulto = 0f;
+        valorCrianca = 0f;
+        valorTotal = 0f;
+        adultos = 0;
+        criancas = 0;
+        totalValorAdulto = 0f;
+        totalValorCrianca = 0f;
+        passaportevalor = null;
+        cliente = null;
+        habilitarCadPassaporte = true;
+        habilitarResultado = false;
+        habilitarConsulta = false;
+    }
+    
+    public void cancelarPassaporte(){
+        passaporte = null;
+        habilitarCadPassaporte = false;
+        habilitarResultado = false;
+        habilitarConsulta = true;
+    }
+    
+    public void cancelarCliente(){
+        cliente = null;
+        habilitarCadCliente = false;
+        habilitarCadPassaporte = true;
+    }
+    
+    
+    public void salvarCliente(){
+        cliente = clienteDao.update(cliente);
+        habilitarCadCliente = false;
+        habilitarCadPassaporte = true;
+    }
+    
+    public void salvarPassaporte(){
+        String msg = validarDados();
+        if (msg.length() < 5) {
+            passaporte.setCliente(cliente);
+            passaporte.setAdultos(adultos);
+            passaporte.setCriancas(criancas);
+            passaporte.setValorpago(valorTotal);
+            passaporte.setFormapagamento(formaPagamento);
+            passaporte = passaporteDao.update(passaporte);
+            passaporte.setLocalizador("PPA" + passaporte.getIdpassaporte());
+            passaporteDao.update(passaporte);
+            lancarContasReceber();
+            passaporte = null;
+            habilitarCadPassaporte = false;
+            habilitarResultado = false;
+            habilitarConsulta = true;
+        }
+    }
+    
+    
+    public String validarDadosPassaporte(){
+        String msg = "";
+        if (cliente == null) {
+            msg = msg + " informe seu cpf para cadastrar ou procurar o cliente \r\n";
+        }
+        return msg;
+    }
+    
+    
+    public void calcularValorTotal(){
+        if (passaportevalor == null || passaportevalor.getIdpassaportevalor() == null) {
+            valorTotal = 0.0f;
+        }else{
+            totalValorAdulto = passaportevalor.getValoradulto() * adultos;
+            totalValorCrianca = passaportevalor.getValorcrianca() * criancas;
+            valorTotal = totalValorAdulto + totalValorCrianca;
+        }
+    }
+    
+    public void getValoresPassaporte(){
+        listaPassaporteValor = passaporteValorDao.list("Select pv From Passaportevalor pv Where pv.situacao=1");
+        if (listaPassaporteValor == null || listaPassaporteValor.isEmpty()) {
+            listaPassaporteValor = new ArrayList<Passaportevalor>();  
+        }
+    }
+    
+    
+    public void pegar(){
+        valorAdulto = passaportevalor.getValoradulto();
+        valorCrianca = passaportevalor.getValorcrianca();
+    }
+    
+    
+    public void pesquisarCliente(){
+        List<Cliente> listaCliente = clienteDao.list("Select c From Cliente c Where c.cpf='" + cpfCliente + "'");
+        if (listaCliente == null || listaCliente.isEmpty()) {
+            cliente = new Cliente();
+            cliente.setCpf(cpfCliente);
+            Mensagem.lancarMensagemInfo("Cpf não encontrado", "cadastre um novo cliente");
+            habilitarCadPassaporte = false;
+            habilitarCadCliente = true;
+        }else{
+            for (int i = 0; i < listaCliente.size(); i++) {
+                cliente = listaCliente.get(i);
+            }
+            habilitarCadPassaporte = true;
+            habilitarCadCliente = false;
+        }  
+    }
+    
+    
+    public void lancarContasReceber() {
+        Contasreceber contasreceber = new Contasreceber();
+        contasreceber.setDatalancamento(new Date());
+        contasreceber.setDatavencimento(new Date());
+        contasreceber.setCliente(cliente);
+        contasreceber.setNumeroparcela("1");
+        contasreceber.setNumerodocumento("" + passaporte.getIdpassaporte());
+        contasreceber.setTipopagamento(formaPagamento);
+        contasreceber.setValorconta(passaporte.getValorpago());
+        contasreceber.setUsuario(usuarioLogadoMB.getUsuario());
+        contasreceber.setEnviado(false);
+        contasreceber.setSituacao("PAGAR");
+        parametros = parametrosDao.find(1);
+        planoconta = planoContaDao.find(parametros.getPlanocontaavulso());
+        contasreceber.setPlanoconta(planoconta);
+        contasReceberDao.update(contasreceber);
     }
 }

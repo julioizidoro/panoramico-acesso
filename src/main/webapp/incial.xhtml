@@ -41,21 +41,24 @@
                         </legend>
                         <h:outputText value="Identificador" style="font-size: 40px;margin-left: 2%;float: left;"/>
                         <br/><br/>
-                        <p:inputText value="#{acessoMB.codigoPesquisa}" style="text-align: right;font-size: 40px; height: 90px;margin-left:-0.5%;width: 97%;" size="13" title="Código do Associado"/>
+                        <p:inputText value="#{acessoMB.codigoPesquisa}" style="text-align: right;font-size: 40px; height: 90px;margin-left:1.5%;width: 97%;" size="13" title="Código do Associado"/>
                         <br/>
                         <h:panelGrid columns="3" style="background: transparent; border: none;">
                             <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisarAssociado()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"> 
-                                <div style="font-size: 40px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Associado</div>
+                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Associado</div>
                             </p:commandLink> 
                             <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisarDependente()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"> 
-                                <div style="font-size: 40px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
+                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
                             </p:commandLink> 
                             <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte" action="#{acessoMB.pesquisarPassaporte()}"> 
-                                <div style="font-size: 40px;width: 100%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Passaporte</div>
+                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Passaporte</div>
                             </p:commandLink>  
                         </h:panelGrid>
                         <p:commandLink disabled="false" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
-                            <div style="font-size: 40px;padding: 3%;width:96%; margin-left:2.4%;" class="pesquisarAcesso">Eventos</div>
+                            <div style="font-size: 40px;padding: 3%;width:45%; margin-left:2.4%;" class="pesquisarAcesso">Eventos</div>
+                        </p:commandLink>
+                        <p:commandLink disabled="false" ajax="false" action="#{acessoMB.novoPassaporte()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte, idpanelCadPassaporte"> 
+                            <div style="font-size: 40px;padding: 3%;width:45%; margin-left:5%;" class="pesquisarAcesso">Novo Passaporte</div>
                         </p:commandLink>
                         <br/><br/><br/>     
                     </fieldset>  
@@ -222,7 +225,7 @@
                             </h:column> 
                             <h:column >  
                                 <f:facet name="header"><b style="font-size: 40px;">Responsavel</b></f:facet>
-                                <h:outputText value="#{eventos.usuario.nome}" style="font-size: 40px; float: left;color: black;" title="Situação"/>
+                                <h:outputText value="#{eventos.cliente.nome}" style="font-size: 40px; float: left;color: black;" title="Situação"/>
                             </h:column>  
                             <h:column >   
                                 <div>
@@ -332,6 +335,116 @@
                         </p:commandLink> 
                         <br/><br/>
                     </fieldset>
+                </h:panelGroup>
+                <h:panelGroup id="idpanelCliente" rendered="#{acessoMB.habilitarCadCliente}">
+                    <p:outputLabel class="titTela" value="Nome" style="font-size: 40px;text-align: left;margin-right:84%;"/>
+                    <br/> 
+                    <p:inputText class="form-control" value="#{acessoMB.cliente.nome}" size="30" style="margin-left:2%;font-size: 40px;height: 60px;width: 98%;"/>
+                    <br/><br/>
+                    <p:outputLabel value="CPF" class="titTela" style="font-size: 40px;text-align: left;margin-left:2%;float: left;"/> 
+                    <p:outputLabel value="Data de Nascimento" class="titTela" style="font-size: 40px;text-align: left;margin-left:39.9%;"/>
+                    <br/>
+                    <p:inputMask mask="999.999.999-99" class="form-control" value="#{acessoMB.cliente.cpf}" style="margin-left:2%;font-size: 40px;height: 60px;width: 45%;float: left;"/>    
+                    <p:inputMask mask="99/99/9999" size="15" class="form-control" value="#{acessoMB.cliente.datanascimento}" style="margin-left:55%;font-size: 40px;height: 60px;width: 45%;">
+                        <f:convertDateTime   pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo"/>
+                    </p:inputMask>
+                    <br/><br/>
+
+
+                    <p:outputLabel class="titTela" value="E-mail" style="font-size: 40px;text-align: left;margin-left:2%;float: left;"/> 
+                    <br/> 
+                    <p:inputText class="form-control" value="#{acessoMB.cliente.email}" size="30" style="margin-left:2%;font-size: 40px;width: 98%;height: 60px;"/> 
+                    <br/><br/>
+                    <p:outputLabel value="Telefone" class="titTela" style="font-size: 40px;text-align: left;margin-right:78%;"/>
+                    <br/>
+                    <p:inputMask mask="(99)99999999" class="form-control" value="#{acessoMB.cliente.telefone}" style="margin-left:2%;font-size: 40px;height: 60px;width: 30%;"/>
+                    <br/>
+                    <hr/>  
+                    <br/>
+                    <p:commandLink style="text-decoration: none;" update="idpanelCliente, idpanelPassaporte" actionListener="#{acessoMB.salvarCliente()}" ajax="false">
+                        <div style="font-size: 40px;margin-left: 32%;" class="cadastrar">Cadastrar</div>
+                    </p:commandLink>
+                    <p:commandLink style="text-decoration: none;" actionListener="#{acessoMB.cancelarCliente()}" ajax="false" update="idpanelCliente, idpanelPassaporte">
+                       <div style="font-size: 40px" class="cancelar">Cancelar</div>
+                    </p:commandLink>   
+                </h:panelGroup>
+                <h:panelGroup id="idpanelCadPassaporte" rendered="#{acessoMB.habilitarCadPassaporte}">
+                    <p:outputLabel class="titTela" value="CPF do CLiente" style="font-size: 40px;text-align: left;margin-right:22%;"/>
+                    <p:outputLabel class="titTela" value="Cliente" style="font-size: 16px;text-align: left;margin-right:30%;"/>
+                    <br/>
+                    <p:inputMask mask="999.999.999-99" size="15" class="form-control" value="#{acessoMB.cpfCliente}" style="margin-left:2%;font-size: 40px;width:33%;float: left;height: 60px;"/>
+                    <p:commandLink ajax="false"  actionListener="#{acessoMB.pesquisarCliente()}" update="idnomeCliente, idpanelCliente, idpanelPassaporte">
+                        <div style="font-size: 30px;margin-left: 2%;margin-top:-0.5%;" class="pesquisarAcesso">Pesquisar</div> 
+                    </p:commandLink>
+                    <p:inputText class="form-control" id="idnomeCliente" value="#{acessoMB.cliente.nome}"  readonly="true" style="font-size: 40px;height: 60px;width: 46%;"/>
+                    <br/><br/><br/>
+                    <p:outputLabel class="titTela" value="Valores do Passaporte" style="font-size: 40px;text-align: left;margin-right:52%;"/>
+                    <br/> 
+                    <p:selectOneMenu  class="form-control" id="idcombovalorespassaporte"  style="width: 98%;margin-left: 2%;font-size: 40px;height: 70px;"  value="#{acessoMB.passaportevalor}" converter="PassaporteValorConverter"
+                                     filter="true" filterMatchMode="contains" panelStyle="width:180px;font-size:40px;" >
+                            <f:selectItem  itemLabel="Selecione" itemValue="0" noSelectionOption="true"/> 
+                            <f:selectItems  value="#{acessoMB.listaPassaporteValor}" var="passaportevalor" itemLabel="#{passaportevalor.descriccao}" itemValue="#{passaportevalor}" />
+                            <f:attribute name="listaPassaporteValor" value="#{acessoMB.listaPassaporteValor}"/>
+                            <p:ajax event="change" process="@this" listener="#{acessoMB.pegar()}"  update="idvaloradulto, idvalorcrianca"/>
+                    </p:selectOneMenu> 
+                    <br/><br/>
+                    <p:outputLabel class="titTela" value="Forma de Pagamento" style="font-size: 40px;text-align: left;margin-right:52%;"/>
+                    <br/>  
+                    <p:selectOneMenu id="tipoPagamento" class="form-control" style="width:98%;font-size: 40px; margin-left: 2%;height: 70px;" value="#{acessoMB.formaPagamento}">
+                        <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/> 
+                        <f:selectItem itemLabel="Dinheiro" itemValue="Dinheiro" /> 
+                        <f:selectItem itemLabel="Cartão" itemValue="cartao" />  
+                        <f:selectItem itemLabel="Cheque" itemValue="Cheque" />
+                        <f:selectItem itemLabel="Debito" itemValue="Debito" />  
+                        <f:selectItem itemLabel="Crédito" itemValue="Credito" />
+                    </p:selectOneMenu>
+                    <br/><br/>
+                    <p:outputLabel class="titTela" value="Q° Adulto(s)" style="font-size: 40px;text-align: left;margin-right: 8%;"/>
+                    <p:outputLabel class="titTela" value="Valor" style="font-size: 40px;text-align: left;margin-right:27.2%;"/>
+                    <p:outputLabel class="titTela" value="Total" style="font-size: 40px;text-align: left;margin-left:16.5%;"/>
+                    <br/>
+                    <p:inputText id="minMaxAdulto" value="#{acessoMB.adultos}"  size="10" style="margin-left: 2%;font-size: 40px;float: left;">
+                        <p:ajax event="change" listener="#{acessoMB.calcularValorTotal()}"  update="idvalorTotal, idvalorTotaladulto"/>
+                    </p:inputText>
+                    <p:inputText class="form-control" readonly="true" id="idvaloradulto" value="#{acessoMB.valorAdulto}" size="10" style="margin-left:5%;font-size: 40px;text-align: right;height: 60px;width: 30%;float: left;">
+                        <f:convertNumber pattern="##,###,###,###.##"/> 
+                    </p:inputText>
+                    <p:inputText class="form-control" readonly="true" id="idvalorTotaladulto" value="#{acessoMB.totalValorAdulto}" style="margin-left:5%;font-size: 40px;text-align: right;height: 60px;width: 30%;float: left;">
+                        <f:convertNumber pattern="##,###,###,###.##"/> 
+                    </p:inputText>
+                    <br/><br/> <br/> <br/> 
+                    <p:outputLabel class="titTela" value="Q° Criança(s)" style="font-size: 40px;text-align: left;margin-left:2%;float: left;"/>
+                    <p:outputLabel class="titTela" value="Valor" style="font-size: 40px;text-align: left;margin-right:25%;"/>
+                    <p:outputLabel class="titTela" value="Total" style="font-size: 40px;text-align: left;margin-right:13%;"/>
+                    <br/>
+                    <p:inputText id="minMaxCrianca" value="#{acessoMB.criancas}" size="10" style="margin-left: 2%;font-size: 40px;float: left;height: 60px;">
+                        <p:ajax event="change" listener="#{acessoMB.calcularValorTotal()}"  update="idvalorTotal, idvalorTotalcrianca"/>
+                    </p:inputText>
+                    <p:inputText class="form-control" readonly="true" id="idvalorcrianca" value="#{acessoMB.valorCrianca}" size="15" style="margin-left:5%;font-size: 40px;text-align: right;height: 60px;width: 30%;float: left;">
+                        <f:convertNumber pattern="##,###,###,###.##"/> 
+                    </p:inputText>
+                    <p:inputText class="form-control" readonly="true" id="idvalorTotalcrianca" value="#{acessoMB.totalValorCrianca}" size="15" style="margin-left:70%;font-size: 40px;height: 60px;text-align: right;width: 30%;">
+                        <f:convertNumber pattern="##,###,###,###.##"/> 
+                    </p:inputText>
+                    <br/><br/>
+                    <p:outputLabel class="titTela" value="Valor Total" style="font-size: 40px;text-align: left;margin-right:29%;"/>
+                    <p:outputLabel class="titTela" value="Data" style="font-size: 40px;text-align: left;margin-right:34%;"/>
+                    <br/>
+                    <p:inputText class="form-control" id="idvalorTotal" readonly="true" value="#{acessoMB.valorTotal}" size="15" style="float: left;margin-left:2%;font-size: 40px;text-align: right;height: 60px;width: 30%;">
+                        <f:convertNumber pattern="##,###,###,###.##"/> 
+                    </p:inputText>
+                    <p:inputMask mask="99/99/9999" size="15" class="form-control" value="#{acessoMB.passaporte.datacompra}" style="margin-left:53%;font-size: 40px;height: 60px;width: 30%;">
+                        <f:convertDateTime   pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo"/>
+                    </p:inputMask>
+                    <br/>
+                    <hr/>
+                    <br/>
+                    <p:commandLink  actionListener="#{acessoMB.salvarPassaporte()}" update="@all">
+                        <div style="font-size: 40px;margin-left: 32%;" class="cadastrar">Confirmar</div>
+                    </p:commandLink>
+                    <p:commandLink actionListener="#{acessoMB.cancelarPassaporte()}" ajax="false" update="@all">
+                        <div style="font-size: 40px" class="cancelar">Cancelar</div>
+                    </p:commandLink>
                 </h:panelGroup>
             </div>
         </h:form> 
