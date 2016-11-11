@@ -44,15 +44,9 @@
                         <p:inputText value="#{acessoMB.codigoPesquisa}" style="text-align: right;font-size: 40px; height: 90px;margin-left:1.5%;width: 97%;" size="13" title="Código do Associado"/>
                         <br/>
                         <h:panelGrid columns="3" style="background: transparent; border: none;">
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisarAssociado()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"> 
-                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Associado</div>
-                            </p:commandLink> 
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" action="#{acessoMB.pesquisarDependente()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"> 
-                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Dependente</div>
-                            </p:commandLink> 
-                            <p:commandLink disabled="false" style="width: 95%; margin-left:2%;" ajax="false" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte" action="#{acessoMB.pesquisarPassaporte()}"> 
-                                <div style="font-size: 40px;width: 96%; padding: 2%; border-radius: 10px;" class="pesquisarAcesso">Passaporte</div>
-                            </p:commandLink>  
+                            <p:commandButton disabled="false" class="pesquisarAcesso" value="Associado"  style="width: 95%; margin-left:2%;font-size: 40px;padding: 0px;" ajax="false" action="#{acessoMB.pesquisarTudo()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNpesquisarAcessoegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"/> 
+                            <p:commandButton disabled="false" value="Dependente" class="pesquisarAcesso" style="width: 95%; margin-left:2%;font-size: 40px;padding: 0px;" ajax="false" action="#{acessoMB.pesquisarDependente()}" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte"/> 
+                            <p:commandButton disabled="false" value="Passaporte" class="pesquisarAcesso" style="width: 95%; margin-left:2%;font-size: 40px;padding: 0px;" ajax="false" update="panelInfo, messages, panelResultado, idCampoNome, idbotaoLiberado, idrespostaNegado, idCampoDataExame, panelConsulta, idCampoNomePassaporte, idbotaoLiberadoPassaporte, panelInfoPassaporte" action="#{acessoMB.pesquisarPassaporte()}"/> 
                         </h:panelGrid>
                         <p:commandLink disabled="false" ajax="false" action="#{acessoMB.eventosDia()}" update="@all"> 
                             <div style="font-size: 40px;padding: 3%;width:45%; margin-left:2.4%;" class="pesquisarAcesso">Eventos</div>
@@ -148,6 +142,11 @@
                                                 <div> 
                                                     <br/>
                                                     <h:outputText value="#{dependente.nome}" style="font-size: 40px;margin-left: 7%;float: left;" title="Nome"/>
+                                                    <p:commandLink   id="idbotaoLiberado" action="#{acessoMB.controleAcessoDependenteAssociado(dependente)}" update="@all">  
+                                                        <div style="font-size: 40px;padding: 1%;width: 38%; margin-right: 8%;float: right;" class="#{acessoMB.tipoClasse}">
+                                                            <h:outputText value="#{acessoMB.nomeStatus}"/>
+                                                        </div>
+                                                    </p:commandLink> 
                                                     <hr style="margin-left:3%; width: 94%;"/>
                                                 </div>
                                             </div>

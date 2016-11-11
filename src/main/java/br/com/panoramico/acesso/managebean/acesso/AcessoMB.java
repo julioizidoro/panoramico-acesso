@@ -1320,4 +1320,64 @@ public class AcessoMB implements Serializable {
         contasreceber.setPlanoconta(planoconta);
         contasReceberDao.update(contasreceber);
     }
+    
+     public void pesquisarTudo() {
+        String msg = "";
+        dependente = null;
+        associado = null;
+        List<Associado> listaAssociado = associadoDao.list("Select a From Associado a Where a.matricula='" + codigoPesquisa + "'");
+        List<Dependente> listaDependente = dependenteDao.list("Select d From Dependente d Where d.matricula='" + codigoPesquisa + "'");
+        List<Passaporte> listaPassaporte = passaporteDao.list("Select p From Passaporte p Where p.localizador='" + codigoPesquisa + "'");
+        if (listaAssociado == null || listaAssociado.isEmpty()) {
+            msg = "Identificador não encontrada";
+            if (listaDependente == null || listaDependente.isEmpty()) {
+                msg = "Identificador não encontrada";
+                if (listaPassaporte == null || listaPassaporte.isEmpty()) {
+                    msg = "Identificador não encontrada";
+                }else{
+                    codigoPesquisa = listaPassaporte.get(0).getLocalizador();
+                    codigoPassaporte = codigoPesquisa;
+                    msg = "";
+                }
+            }else{
+                codigoPesquisa = listaDependente.get(0).getMatricula();
+                codigoDependente = codigoPesquisa;
+                msg = "";
+            }
+        }else{
+            codigoPesquisa = listaAssociado.get(0).getMatricula();
+            codigoAssociado = codigoPesquisa;
+            msg = "";
+        }
+        codigoPesquisa = "";
+        if (msg.length() > 1) {
+            Mensagem.lancarMensagemInfo(msg, "");
+            habilitarCadPassaporte = false;
+            habilitarCadCliente = false;
+            habilitarEventosConvidadosPresentes = false;
+            habilitarEventosConvidados = false;
+            habilitarEventosDia = false;
+            habilitarInfoPassaporte = false;
+            habilitarBotaoDependente = true;
+            habilitarResultado = false;
+            habilitarConsulta = true;
+        }else{
+            pesquisar(); 
+        }
+    }
+     
+    
+    public void controleAcessoDependenteAssociado(Dependente dependente) {
+        controleacesso = new Controleacesso();
+        controleacesso.setSituacao(nomeStatus);
+        controleacesso.setData(new Date());
+        controleacesso.setHora(retornarHoraAtual());
+        if (guardaDependente.length() >= 1) {
+            controleacesso.setIddependente(dependente.getIddependente());
+            controleacesso.setAssociado(dependente.getAssociado());
+            controleacesso.setTipo("D");
+            controleacesso = controleAcessoDao.update(controleacesso);
+            Mensagem.lancarMensagemInfo("Salvo com sucesso", "");
+        }
+    }
 }
