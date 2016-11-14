@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="panoramicoPU " transaction-type="JTA">
-    <jta-data-source>java:/panoramico_DS</jta-data-source>
+    <jta-data-source>java:/panoramicoDS</jta-data-source>
     <class>br.com.panoramico.acesso.model.Acesso</class>
     <class>br.com.panoramico.acesso.model.Ambiente</class>
     <class>br.com.panoramico.acesso.model.Associado</class>
@@ -10,7 +10,7 @@
     <class>br.com.panoramico.acesso.model.Cliente</class>
     <class>br.com.panoramico.acesso.model.Contaspagar</class>
     <class>br.com.panoramico.acesso.model.Contasreceber</class>
-    <class>br.com.panoramico.acesso.model.Controleacesso</class>
+    <class>br.com.panoramico.acesso.model.Controleacesso</class> 
     <class>br.com.panoramico.acesso.model.Crcancelamento</class>
     <class>br.com.panoramico.acesso.model.Dependente</class>
     <class>br.com.panoramico.acesso.model.Empresa</class>
